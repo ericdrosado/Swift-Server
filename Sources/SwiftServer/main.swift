@@ -5,7 +5,7 @@ class Server {
     
     private let port: Int
     private let acceptNewConnection = true
-    private let greeting = "Hello World"
+    private let greeting = "<!DOCTYPE html><html><body><h1>Hello World</h1></body></html>"
 
     init(port: Int){
         self.port = port
@@ -16,7 +16,9 @@ class Server {
         try socket.listen(on: port)
         repeat {
             let connectedSocket = try socket.acceptClientConnection()
-        try connectedSocket.write(from:"HTTP/1.1 200 OK\r\n Content-Length: \(greeting.count) \r\n Content-type: text/html|r|n Connection: Closed\r\n\r\n <!DOCTYPE html> <html> <body>  <h1>\(greeting)</h1> </body> </html>")
+            //let bytes: [UInt8] = Array(greeting.utf8)
+            try connectedSocket.write(from:"HTTP/1.1 200 OK\r\nContent-Length: \(greeting.utf8.count)\r\nContent-type: text/html\r\nConnection: close\r\n\r\n\(greeting)")
+            connectedSocket.close()
         } while acceptNewConnection
         
     }
