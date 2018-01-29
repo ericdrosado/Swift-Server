@@ -4,7 +4,7 @@
 + Clone this repository
 + Insure you have downloaded Swift to your machine. This project was built with Swift version 4.0.3.
 + In the root of your local repository:
-```swift package fetch```
+```swift package resolve```
 to download dependencies.
 + Still in the root:
 ```swift build```
