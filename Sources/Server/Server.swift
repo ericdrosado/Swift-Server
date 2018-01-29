@@ -18,14 +18,14 @@ public class Server {
         repeat {
             let connectedSocket = try socket.acceptClientConnection()
             let request = try connectedSocket.readString()! 
-            let httpRequest = parseRequest(request: request)
+            let httpRequest = getRequestMethod(request: request)
             let response = prepareResponse(request: httpRequest)
             try connectedSocket.write(from: response)
             connectedSocket.close()
         } while acceptNewConnection
     }
 
-    public func parseRequest(request: String) -> String {
+    public func getRequestMethod(request: String) -> String {
         let requestMethod = request.components(separatedBy: " ")
         return requestMethod[0]
     }

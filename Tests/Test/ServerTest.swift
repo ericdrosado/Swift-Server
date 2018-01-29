@@ -9,13 +9,13 @@ class ServerTest: XCTestCase {
 
     func testParseRequestWillReturnGETResponse() {
         let request = "GET / " + ServerTest.header
-        let methodRequest = server.parseRequest(request: request)            
+        let methodRequest = server.getRequestMethod(request: request)            
         XCTAssertEqual("GET", methodRequest)
     }
 
     func testParseRequestWillReturnHeadRequest(){
         let request = "Head / " + ServerTest.header
-        let methodRequest = server.parseRequest(request: request)            
+        let methodRequest = server.getRequestMethod(request: request)            
         XCTAssertEqual("Head", methodRequest)
     }
 
