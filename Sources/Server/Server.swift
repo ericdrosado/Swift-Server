@@ -18,8 +18,8 @@ public class Server {
         repeat {
             let connectedSocket = try socket.acceptClientConnection()
             let request = try connectedSocket.readString()! 
-            let httpRequest = getRequestMethod(request: request)
-            let response = prepareResponse(request: httpRequest)
+            let httpRequestMethod = getRequestMethod(request: request)
+            let response = prepareResponse(requestMethod: httpRequestMethod)
             try connectedSocket.write(from: response)
             connectedSocket.close()
         } while acceptNewConnection
@@ -30,8 +30,8 @@ public class Server {
         return requestMethod[0]
     }
 
-    public func prepareResponse(request: String) -> String {
-        if (request == "GET") {
+    public func prepareResponse(requestMethod: String) -> String {
+        if (requestMethod == "GET") {
            return Server.header + Server.body          
         } else {
             return Server.header

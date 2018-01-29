@@ -21,12 +21,12 @@ class ServerTest: XCTestCase {
 
     func testPrepareResponseWillReturnGETResponse() {
         let response = ServerTest.header + ServerTest.body
-        XCTAssertEqual(response, server.prepareResponse(request: "GET"))
+        XCTAssertEqual(response, server.prepareResponse(requestMethod: "GET"))
     }
 
     func testPrepareResponseWillReturnHEADResponse() {
         let response = ServerTest.header  
-        XCTAssertEqual(response, server.prepareResponse(request: "HEAD"))
+        XCTAssertEqual(response, server.prepareResponse(requestMethod: "HEAD"))
     }
 
 }
