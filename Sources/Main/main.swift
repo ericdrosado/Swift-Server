@@ -1,4 +1,5 @@
 import Server
 
-let server = Server(port: 3333)
+let response = Response()
+let server = Server(port: 3333, response: response)
 try server.startServer()
