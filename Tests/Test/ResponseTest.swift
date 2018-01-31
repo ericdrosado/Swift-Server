@@ -35,4 +35,11 @@ class ResponseTest: XCTestCase {
         XCTAssertEqual(expectedResponse, response.buildResponse(serverRequest: request))
     }
 
+    func testBuildResponseWillReturnGETResponseWithQuery() {
+        let request = "GET /hello?noun=Person"
+        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 62\r\nContent-type: text/html\r\n\r\n"
+ + "<!DOCTYPE html><html><body><h1>Hello Person</h1></body></html>"
+        XCTAssertEqual(expectedResponse, response.buildResponse(serverRequest: request))
+    }
+
 }

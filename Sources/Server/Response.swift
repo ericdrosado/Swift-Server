@@ -21,6 +21,7 @@ public class Response {
        if (paths.contains(path)) {
            body = prepareBody(body: "Hello \(queries["noun"]!)", method: method)
            header = buildHeader(statusCode: status200, contentLength: body.utf8.count) 
+           queries.updateValue("World", forKey: "noun")
        } else {
            body = prepareBody(body: status404Body, method: method) 
            header = buildHeader(statusCode: status404, contentLength: body.utf8.count) 
@@ -52,7 +53,7 @@ public class Response {
    private func parsePathForQueries(path: String) -> String {
         let parsedQueries = path.split(separator: "?") 
         let query = parsedQueries[1].split(separator: "=") 
-        self.queries.updateValue(String(query[1]), forKey: String(query[0]))
+        queries.updateValue(String(query[1]), forKey: String(query[0]))
         return String(parsedQueries[0])
    }
 
