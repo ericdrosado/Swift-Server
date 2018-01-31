@@ -42,4 +42,14 @@ class ResponseTest: XCTestCase {
         XCTAssertEqual(expectedResponse, response.buildResponse(serverRequest: request))
     }
 
+    func testBuildResponseWillReturnProperGETResponseWithQueryAfterAnInitialRequest() {
+        let request1 = "GET /hello?noun=Person"
+        let request2 = "GET /hello"
+        let expectedResponse = header200 + ResponseTest.body200 
+
+        response.buildResponse(serverRequest: request1)
+
+        XCTAssertEqual(expectedResponse, response.buildResponse(serverRequest: request2))
+    }
+
 }
