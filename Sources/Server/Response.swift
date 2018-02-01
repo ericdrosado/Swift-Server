@@ -25,7 +25,7 @@ public class Response {
         let body: String
         let header: String
         if (paths.contains(path)) {
-            body = prepareBody(body: "Hello\(buildBody())", method: method)
+            body = prepareBody(body: "Hello \(buildBody())", method: method)
             header = buildHeader(statusCode: status200, contentLength: body.utf8.count) 
             parser.setDefaultQueries()
         } else {
@@ -36,13 +36,9 @@ public class Response {
    }
 
    private func buildBody() -> String {
-        var body = ""
-        for (_, value) in parser.queries {
-            if (value != ""){
-                body = body + " " + String(value)
-            }
-        }
-        return body
+        var querieNames = [parser.queries["fname"], parser.queries["mname"], parser.queries["lname"]] 
+        querieNames = querieNames.filter {$0 != ""}
+        return querieNames.map({$0!.trimmingCharacters(in:.whitespacesAndNewlines)}).joined(separator: " ")
    }
 
    private func prepareBody(body: String, method: String) -> String {
