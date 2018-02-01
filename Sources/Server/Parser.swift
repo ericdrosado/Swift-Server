@@ -5,8 +5,14 @@ public class Parser {
     public var queries: [String:String]
 
     public init() {
-        self.queries = ["fname": "World", "mname": "", "lname": ""]
+        self.queries = ["fname": "", "mname": "", "lname": ""]
     }
+
+   public func setDefaultQueries(){
+        queries.updateValue("", forKey: "fname")
+        queries.updateValue("", forKey: "mname")
+        queries.updateValue("", forKey: "lname")
+   }
 
    public func parseRequest(request: String) -> (String, String) {
         let requestComponent = request.components(separatedBy: " ")
@@ -14,6 +20,7 @@ public class Parser {
                 let path = parsePathForQueries(path: requestComponent[1])
                 return (requestComponent[0], path) 
             }
+        queries.updateValue("World", forKey: "fname")
         return (requestComponent[0], requestComponent[1])
    }
 
@@ -30,4 +37,5 @@ public class Parser {
             queries.updateValue(String(singleQuery[1]), forKey: String(singleQuery[0]))
         }
    }
+
 }

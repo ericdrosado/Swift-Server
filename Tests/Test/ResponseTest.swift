@@ -5,7 +5,7 @@ class ResponseTest: XCTestCase {
     
     static let parser = Parser()
     let response = Response(parser: parser)
-    static let body200 = "<!DOCTYPE html><html><body><h1>Hello World  </h1></body></html>"
+    static let body200 = "<!DOCTYPE html><html><body><h1>Hello World</h1></body></html>"
     static let body404 = "<!DOCTYPE html><html><body><h1>404 Page Not Found</h1></body></html>"
     let header200 = "HTTP/1.1 200 OK\r\nContent-Length: \(body200.utf8.count)\r\nContent-type: text/html\r\n\r\n"
     let header404 = "HTTP/1.1 404 Not Found\r\nContent-Length: \(body404.utf8.count)\r\nContent-type: text/html\r\n\r\n"
@@ -38,15 +38,15 @@ class ResponseTest: XCTestCase {
 
     func testBuildResponseWillReturnGETResponseWithQuery() {
         let request = "GET /hello?fname=Person"
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 64\r\nContent-type: text/html\r\n\r\n"
- + "<!DOCTYPE html><html><body><h1>Hello Person  </h1></body></html>"
+        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 62\r\nContent-type: text/html\r\n\r\n"
+ + "<!DOCTYPE html><html><body><h1>Hello Person</h1></body></html>"
         XCTAssertEqual(expectedResponse, response.buildResponse(serverRequest: request))
     }
 
     func testBuildResponseWillReturnGETResponseWith2Queries() {
-        let request = "GET /hello?fname=Person&lname=Doe"
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 67\r\nContent-type: text/html\r\n\r\n"
- + "<!DOCTYPE html><html><body><h1>Hello Person  Doe</h1></body></html>"
+        let request = "GET /hello?mname=Person&lname=Doe"
+        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 66\r\nContent-type: text/html\r\n\r\n"
+ + "<!DOCTYPE html><html><body><h1>Hello Person Doe</h1></body></html>"
         XCTAssertEqual(expectedResponse, response.buildResponse(serverRequest: request))
     }
 
@@ -58,7 +58,7 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnProperGETResponseWithQueryAfterAnInitialRequest() {
-        let request1 = "GET /hello?noun=Person"
+        let request1 = "GET /hello?fname=Person"
         let request2 = "GET /hello"
         let expectedResponse = header200 + ResponseTest.body200 
 

@@ -25,14 +25,24 @@ public class Response {
         let body: String
         let header: String
         if (paths.contains(path)) {
-            body = prepareBody(body: "Hello \(parser.queries["fname"]!) \(parser.queries["mname"]!) \(parser.queries["lname"]!)", method: method)
+            body = prepareBody(body: "Hello\(buildBody())", method: method)
             header = buildHeader(statusCode: status200, contentLength: body.utf8.count) 
-            setDefaultQueries()
+            parser.setDefaultQueries()
         } else {
             body = prepareBody(body: status404Body, method: method) 
             header = buildHeader(statusCode: status404, contentLength: body.utf8.count) 
         }      
         return header + body
+   }
+
+   private func buildBody() -> String {
+        var body = ""
+        for (_, value) in parser.queries {
+            if (value != ""){
+                body = body + " " + String(value)
+            }
+        }
+        return body
    }
 
    private func prepareBody(body: String, method: String) -> String {
@@ -47,11 +57,6 @@ public class Response {
         return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
    }
 
-   private func setDefaultQueries(){
-        parser.queries.updateValue("World", forKey: "fname")
-        parser.queries.updateValue("", forKey: "mname")
-        parser.queries.updateValue("", forKey: "lname")
-   }
 
 }
 
