@@ -1,4 +1,4 @@
-# SwiftServer
+# SwiftServer [![Build Status](https://travis-ci.org/ericdrosado/Swift-Server.svg?branch=master)](https://travis-ci.org/ericdrosado/Swift-Server) 
 
 ### Setup
 + Clone this repository
@@ -13,6 +13,10 @@ to build the project.
 ### To run:
 + In the root directory:
 ```swift run```
+
+### To run tests:
++ In the root directory:
+```swift test```
 
 ### To Interact with server:
 + Make sure to follow run instructions before proceeding.
