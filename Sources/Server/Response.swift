@@ -36,9 +36,8 @@ public class Response {
    }
 
    private func buildBody() -> String {
-        var querieNames = [parser.queries["fname"], parser.queries["mname"], parser.queries["lname"]] 
-        querieNames = querieNames.filter {$0 != ""}
-        return querieNames.map({$0!.trimmingCharacters(in:.whitespacesAndNewlines)}).joined(separator: " ")
+        let querieNames = [parser.queries["fname"], parser.queries["mname"], parser.queries["lname"]] 
+        return querieNames.filter({$0 != ""}).map({$0!.trimmingCharacters(in:.whitespacesAndNewlines)}).joined(separator: " ")
    }
 
    private func prepareBody(body: String, method: String) -> String {
@@ -52,7 +51,6 @@ public class Response {
    private func buildHeader(statusCode: String, contentLength: Int) -> String {
         return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
    }
-
 
 }
 
