@@ -1,0 +1,3 @@
+[submodule "cob_spec"]
+	path = cob_spec
+	url = https://github.com/ericdrosado/cob_spec
