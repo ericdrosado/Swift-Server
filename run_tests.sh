@@ -1,8 +1,6 @@
 #!/bin/bash
-
-swift test &
-PID=$!
+set -e
+swift test
 cd cob_spec
 mvn package
 java -jar fitnesse.jar -c "PassingTestSuite?suite&format=text"
-kill -9 $PID
