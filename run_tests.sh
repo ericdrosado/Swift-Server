@@ -1,6 +1,6 @@
 #!/bin/bash
 
-swift run &
+swift test &
 PID=$!
 cd cob_spec
 mvn package
