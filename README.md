@@ -14,9 +14,13 @@ to build the project.
 + In the root directory:
 ```swift run```
 
+### To run with a specific port:
++ In the root directory enter the following with a port number where "portNumber" is located:
+```./.build/debug/main portNumber```
+
 ### To run tests:
 + In the root directory:
-```swift test```
+```./run_tests.sh```
 
 ### To Interact with server:
 + Make sure to follow run instructions before proceeding.
