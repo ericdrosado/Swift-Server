@@ -10,7 +10,7 @@ to download dependencies.
 ```swift build```
 to build the project.
 
-### To run:
+### To run on port 5000:
 + In the root directory:
 ```swift run```
 
