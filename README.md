@@ -10,13 +10,17 @@ to download dependencies.
 ```swift build```
 to build the project.
 
-### To run:
+### To run on port 5000:
 + In the root directory:
 ```swift run```
 
+### To run with a specific port:
++ In the root directory enter the following with a port number:
+```./.build/debug/main <port>```
+
 ### To run tests:
 + In the root directory:
-```swift test```
+```./run_tests.sh```
 
 ### To Interact with server:
 + Make sure to follow run instructions before proceeding.
