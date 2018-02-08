@@ -1,12 +1,12 @@
 import Server
 
 let parser = Parser()
-let response = Response(parser: parser)
-let server: Server
+let response = Response(parser: parser) 
+let port: Int
 if CommandLine.argc < 2 {
-    server = Server(port: 5000, response: response)
+    port = 5000
 } else {
-    server = Server(port: Int(CommandLine.arguments[1])!, response: response)
+    port = Int(CommandLine.arguments[1])!
 }
-
+let server = Server(port: port, response: response)
 try server.startServer()
