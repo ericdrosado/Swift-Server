@@ -2,40 +2,31 @@ import Foundation
 
 public class Parser {
     
-    public var queries: [String:String]
+   public init(){}
 
-    public init() {
-        self.queries = ["fname": "", "mname": "", "lname": ""]
-    }
-
-   public func setDefaultQueries(){
-        queries.updateValue("", forKey: "fname")
-        queries.updateValue("", forKey: "mname")
-        queries.updateValue("", forKey: "lname")
-   }
-
-   public func parseRequest(request: String) -> (String, String) {
+   public func parseRequest(request: String) -> Request {
         let requestComponent = request.components(separatedBy: " ")
             if (requestComponent[1].contains("?")) {
-                let path = parsePathForQueries(path: requestComponent[1])
-                return (requestComponent[0], path) 
+                let parsedPathWithQueries = parsePath(path: requestComponent[1])
+                let queries = parseAllQueries(parsedQuery: parsedPathWithQueries[1])
+                return Request(method: requestComponent[0], path: parsedPathWithQueries[0], queries: queries) 
             }
-        queries.updateValue("World", forKey: "fname")
-        return (requestComponent[0], requestComponent[1])
+        return Request(method: requestComponent[0], path: requestComponent[1])
    }
 
-   private func parsePathForQueries(path: String) -> String {
-        let parsedQueries = path.split(separator: "?") 
-        parseAllQueries(parsedQuery: String(parsedQueries[1]))
-        return String(parsedQueries[0])
+   private func parsePath(path: String) -> Array<String> {
+        let parsedPathWithQueries = path.split(separator: "?").map(String.init) 
+        return parsedPathWithQueries
    }
 
-   private func parseAllQueries(parsedQuery: String) {
+   private func parseAllQueries(parsedQuery: String) -> [String: String] {
+        var queries: [String: String] = [:]
         let parsedQueries = parsedQuery.split(separator: "&")
         for query in parsedQueries {
             let singleQuery = query.split(separator: "=") 
-            queries.updateValue(String(singleQuery[1]), forKey: String(singleQuery[0]))
+            queries[String(singleQuery[0])] = String(singleQuery[1])
         }
+        return queries
    }
 
 }
