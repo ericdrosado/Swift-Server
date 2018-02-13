@@ -5,13 +5,13 @@ public class Parser {
    public init(){}
 
    public func parseRequest(request: String) -> Request {
-        let requestComponent = request.components(separatedBy: " ")
-            if (requestComponent[1].contains("?")) {
-                let parsedPathWithQueries = parsePath(path: requestComponent[1])
+        let requestComponents = request.components(separatedBy: " ")
+            if (requestComponents[1].contains("?")) {
+                let parsedPathWithQueries = parsePath(path: requestComponents[1])
                 let queries = parseAllQueries(parsedQuery: parsedPathWithQueries[1])
-                return Request(method: requestComponent[0], path: parsedPathWithQueries[0], queries: queries) 
+                return Request(method: requestComponents[0], path: parsedPathWithQueries[0], queries: queries) 
             }
-        return Request(method: requestComponent[0], path: requestComponent[1])
+        return Request(method: requestComponents[0], path: requestComponents[1])
    }
 
    private func parsePath(path: String) -> Array<String> {
