@@ -3,7 +3,8 @@ import Foundation
 public class Response {
 
     let parser: Parser
-    var paths: [String: (Response) -> (Request) -> (String)] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handle200]
+    typealias PathHandler = (Response) -> (Request) -> String
+    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot]
     let status200: String
     let status404: String
     let status404Body: String
@@ -24,35 +25,6 @@ public class Response {
         }
     }
 
-    private func buildBody(request: Request) -> String {
-        var queries = [String]()
-        for (_, value) in request.queries {
-            queries.append(value)    
-        }
-        return queries
-                .filter({$0 != ""})
-                .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
-                .joined(separator: " ")
-    }
-
-    private func prepareBody(body: String, method: String) -> String {
-        if (body == status404Body && method == "HEAD" || method == "HEAD") {
-            return ""    
-        } else {
-            return "<!DOCTYPE html><html><body><h1>\(body)</h1></body></html>"
-        }
-    }
-
-    private func buildHeader(statusCode: String, contentLength: Int) -> String {
-        return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
-    }
-
-    private func handle200(request: Request) -> String {
-        let body = ""
-        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count) 
-        return header + body
-    }
-
     private func handle404(request: Request) -> String {
         let body = prepareBody(body: status404Body, method: request.method) 
         let header = buildHeader(statusCode: status404, contentLength: body.utf8.count) 
@@ -60,7 +32,7 @@ public class Response {
     }
 
     private func handleRoot(request: Request) -> String {
-        var body = "Hello World"  
+        var body = request.path == "/" ? "Hello World": String()
         body = prepareBody(body: body, method: request.method)
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
@@ -76,6 +48,29 @@ public class Response {
         var body = "I'm a teapot"
         let header = buildHeader(statusCode: "418", contentLength: body.utf8.count)
         return header + body
+    }
+    
+    private func prepareBody(body: String, method: String) -> String {
+        if (method == "HEAD") {
+            return ""    
+        } else {
+            return "<!DOCTYPE html><html><body><h1>\(body)</h1></body></html>"
+        }
+    }
+
+    private func buildHeader(statusCode: String, contentLength: Int) -> String {
+        return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
+    }
+    
+    private func buildBody(request: Request) -> String {
+        var queries = [String]()
+        for (_, value) in request.queries {
+            queries.append(value)    
+        }
+        return queries
+                .filter({$0 != ""})
+                .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
+                .joined(separator: " ")
     }
 }
 
