@@ -24,7 +24,7 @@ public class Parser {
         let parsedQueries = parsedQuery.split(separator: "&")
         for query in parsedQueries {
             let singleQuery = query.split(separator: "=") 
-            queries[String(singleQuery[0])] = String(singleQuery[1])
+            queries[String(singleQuery[0])] = String(singleQuery[1]).removingPercentEncoding
         }
         return queries
    }

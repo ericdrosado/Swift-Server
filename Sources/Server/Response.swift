@@ -4,7 +4,7 @@ public class Response {
 
     let parser: Parser
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot]
+    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters]
     let status200: String
     let status404: String
     let status404Body: String
@@ -39,7 +39,9 @@ public class Response {
     } 
 
     private func handleHello(request: Request) -> String {
-        let body = prepareBody(body: "Hello \(buildBody(request: request))", method: request.method)
+        let sortedQueries = request.sortHelloQueries(queries: request.queries)
+        let helloRequest = Request(method: request.method, path: request.path, queries: sortedQueries)
+        let body = prepareBody(body: "Hello \(buildBody(request: helloRequest))", method: request.method)
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
@@ -47,6 +49,12 @@ public class Response {
     private func handleCoffee(request: Request) -> String {
         var body = "I'm a teapot"
         let header = buildHeader(statusCode: "418", contentLength: body.utf8.count)
+        return header + body
+    }
+
+    private func handleParameters(request: Request) -> String {
+        var body = prepareBody(body: "\(buildBody(request: request))", method: request.method)
+        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
     
@@ -64,8 +72,15 @@ public class Response {
     
     private func buildBody(request: Request) -> String {
         var queries = [String]()
-        for (_, value) in request.queries {
-            queries.append(value)    
+        if (request.path == "/parameters") {
+            for (key, value) in request.queries {
+                queries.append(key + " = ")
+                queries.append(value)    
+            }
+        } else {
+            for (_, value) in request.queries {
+                queries.append(value)    
+            }
         }
         return queries
                 .filter({$0 != ""})
