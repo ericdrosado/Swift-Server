@@ -14,9 +14,13 @@ to build the project.
 + In the root directory:
 ```swift run```
 
-### To run with a specific port:
-+ In the root directory enter the following with a port number:
-```./.build/debug/main <port>```
+### To run with a specific port and serve from a particular directory:
++ In the root directory you can enter any of the following examples:
+```
+./.build/debug/main -p <port> //Default directory is ./public without -d
+.//build/debug/main -d <directoryPath> //Default port is 5000 without -p
+./.build/debug/main -p <port> -d <directoryPath>
+```
 
 ### To run tests:
 + In the root directory:
@@ -25,4 +29,4 @@ to build the project.
 ### To Interact with server:
 + Make sure to follow run instructions before proceeding.
 + Send a cURL request in a separate CLI session:
-```curl 127.0.0.1:3333/```
+```curl 127.0.0.1:<port>/```
