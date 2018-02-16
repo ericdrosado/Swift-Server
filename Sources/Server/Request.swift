@@ -12,7 +12,7 @@ public struct Request {
      init(method: String, path: String, queries: [String: String]) {
          self.method = method
          self.path = path
-         self.queries = sortHelloQueries(queries: queries)
+         self.queries = queries
      }
 
      func sortHelloQueries(queries: [String: String]) -> [String: String] {
