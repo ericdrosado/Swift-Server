@@ -4,7 +4,7 @@ public class Response {
 
     let parser: Parser
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters]
+    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie]
     let status200: String
     let status404: String
     let status404Body: String
@@ -47,13 +47,25 @@ public class Response {
     }
 
     private func handleCoffee(request: Request) -> String {
-        var body = "I'm a teapot"
+        let body = "I'm a teapot"
         let header = buildHeader(statusCode: "418", contentLength: body.utf8.count)
         return header + body
     }
 
     private func handleParameters(request: Request) -> String {
         var body = prepareBody(body: "\(buildParameterBody(request: request))", method: request.method)
+        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
+        return header + body
+    }
+
+    private func handleCookie(request: Request) -> String {
+        let body = "Eat"
+        let header = "HTTP/1.1 \(status200)\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\nSet-Cookie: type=chocolate\r\n\r\n" 
+        return header + body
+    }
+
+    private func handleEatCookie(request: Request) -> String {
+        let body = "mmmm \(request.cookie)"
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
