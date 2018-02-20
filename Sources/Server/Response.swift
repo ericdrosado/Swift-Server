@@ -53,7 +53,7 @@ public class Response {
     }
 
     private func handleParameters(request: Request) -> String {
-        var body = prepareBody(body: "\(buildBody(request: request))", method: request.method)
+        var body = prepareBody(body: "\(buildParameterBody(request: request))", method: request.method)
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
@@ -69,18 +69,23 @@ public class Response {
     private func buildHeader(statusCode: String, contentLength: Int) -> String {
         return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
     }
+
+    private func buildParameterBody(request: Request) -> String {
+         var queries = [String]()
+         for (key, value) in request.queries {
+             queries.append(key + " = ")
+             queries.append(value)    
+         }
+         return queries
+                .filter({$0 != ""})
+                .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
+                .joined(separator: " ")
+    }
     
     private func buildBody(request: Request) -> String {
         var queries = [String]()
-        if (request.path == "/parameters") {
-            for (key, value) in request.queries {
-                queries.append(key + " = ")
-                queries.append(value)    
-            }
-        } else {
-            for (_, value) in request.queries {
-                queries.append(value)    
-            }
+        for (_, value) in request.queries {
+            queries.append(value)    
         }
         return queries
                 .filter({$0 != ""})
