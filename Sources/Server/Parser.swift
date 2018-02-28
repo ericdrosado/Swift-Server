@@ -5,37 +5,29 @@ public class Parser {
     public init(){}
 
     public func parseRequest(request: String) -> Request {
-        var (requestComponents, requestHeaders) = parseRequest(request: request)
+        var (requestLineComponents, requestHeaders) = parseRequestMessage(request: request)
         let headers = parseHeaders(requestHeaders: requestHeaders)
-        if (requestComponents[1].contains("?")) {
-            let parsedPathWithQueries = parsePath(path: String(requestComponents[1]))
+        if (requestLineComponents[1].contains("?")) {
+            let parsedPathWithQueries = parsePath(path: String(requestLineComponents[1]))
             let queries = parseAllQueries(parsedQuery: parsedPathWithQueries[1])
-            return Request(method: String(requestComponents[0]), path: parsedPathWithQueries[0], queries: queries) 
+            return Request(method: String(requestLineComponents[0]), path: parsedPathWithQueries[0], queries: queries) 
         } else if (headers.keys.contains("Cookie")) {
             let cookie = parseCookie(headers: headers)
-            return Request(method: String(requestComponents[0]), path: String(requestComponents[1]), cookie: cookie["type"]!) 
+            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), cookie: cookie["type"]!) 
         } else {
-            return Request(method: String(requestComponents[0]), path: String(requestComponents[1]))
+            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]))
         }
     }
 
-    private func parseRequest(request: String) -> (Array<Substring>, Array<String>) {
-        var requestAndHeaders = request.components(separatedBy: "\r\n")
-        let requestComponents = requestAndHeaders[0].split(separator: " ")
-        let requestHeaders = parseNonHeaderComponents(requestWithHeaders: requestAndHeaders)
-        return (requestComponents, requestHeaders)
-    }
-
-    private func parseNonHeaderComponents(requestWithHeaders: Array<String>) -> (Array<String>) {
-        var headers = requestWithHeaders
-        headers.removeFirst(1)
-        headers.removeLast(2) 
-        return headers 
+    private func parseRequestMessage(request: String) -> (Array<String>, Array<String>) {
+        let requestComponents = request.components(separatedBy: "\r\n").filter{$0 != ""}
+        let requestHeaders: [String] = Array(requestComponents[1..<requestComponents.count]) 
+        let requestLineComponents: [String] = Array(requestComponents[0].split(separator: " ").map{String($0)}) 
+        return (requestLineComponents, requestHeaders)
     }
 
     private func parsePath(path: String) -> Array<String> {
-        let parsedPathWithQueries = path.split(separator: "?").map(String.init) 
-        return parsedPathWithQueries
+        return path.split(separator: "?").map(String.init) 
     }
 
     private func parseAllQueries(parsedQuery: String) -> [String: String] {
