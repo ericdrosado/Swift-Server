@@ -4,7 +4,7 @@ public class Response {
 
     let parser: Parser
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters]
+    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/redirect": handleRedirect]
     let status200: String
     let status404: String
     let status404Body: String
@@ -55,6 +55,12 @@ public class Response {
     private func handleParameters(request: Request) -> String {
         var body = prepareBody(body: "\(buildBody(request: request))", method: request.method)
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
+        return header + body
+    }
+
+    private func handleRedirect(request: Request) -> String {
+        let body = prepareBody(body: "Hello World", method: request.method)
+        let header = "HTTP/1.1 302\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\nLocation: /\r\n\r\n" 
         return header + body
     }
     
