@@ -2,22 +2,19 @@ import Foundation
 
 public class Response {
 
-    let parser: Parser
     typealias PathHandler = (Response) -> (Request) -> String
     var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters]
     let status200: String
     let status404: String
     let status404Body: String
 
-    public init(parser: Parser){
-        self.parser = parser
+    public init(){
         self.status200 = "200 OK"
         self.status404 = "404 Not Found"
         self.status404Body = "404 Page Not Found"
     }
 
-    public func buildResponse(serverRequest: String) -> String {
-        let request = parser.parseRequest(request: serverRequest)
+    public func buildResponse(request: Request) -> String {
         if (paths.keys.contains(request.path)) {
             return paths[request.path]!(self)(request)
         } else {
