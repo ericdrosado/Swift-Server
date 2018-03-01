@@ -4,10 +4,12 @@ import Socket
 public class Server {
     
     private let acceptNewConnection = true
+    private let parser: Parser
     private let port: Int
     let response: Response
 
-    public init(port: Int, response: Response) {
+    public init(parser: Parser, port: Int, response: Response) {
+        self.parser = parser
         self.port = port
         self.response = response  
     }
@@ -18,7 +20,8 @@ public class Server {
         repeat {
             let connectedSocket = try socket.acceptClientConnection()
             let request = try connectedSocket.readString()! 
-            let requestResponse = response.buildResponse(serverRequest: request)
+            let parsedRequest = parser.parseRequest(request: request)
+            let requestResponse = response.buildResponse(request: parsedRequest)
             try connectedSocket.write(from: requestResponse)
             connectedSocket.close()
         } while acceptNewConnection
