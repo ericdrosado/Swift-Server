@@ -18,12 +18,16 @@ public class Server {
         let socket = try Socket.create()
         try socket.listen(on: port)
         repeat {
-            let connectedSocket = try socket.acceptClientConnection()
-            let request = try connectedSocket.readString()! 
-            let parsedRequest = parser.parseRequest(request: request)
-            let requestResponse = response.buildResponse(request: parsedRequest)
-            try connectedSocket.write(from: requestResponse)
-            connectedSocket.close()
+            do {
+                let connectedSocket = try socket.acceptClientConnection()
+                let request = try connectedSocket.readString()! 
+                let parsedRequest = parser.parseRequest(request: request)
+                let requestResponse = response.buildResponse(request: parsedRequest)
+                try connectedSocket.write(from: requestResponse)
+                connectedSocket.close()
+            } catch {
+                print("Error: \(error)")
+            }
         } while acceptNewConnection
     }
 

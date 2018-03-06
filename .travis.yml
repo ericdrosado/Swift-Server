@@ -1,4 +1,11 @@
 language: swift
 osx_image: xcode9
 script:
-    - ./run_tests.sh
+- "./run_tests.sh"
+deploy:
+  on: 
+    branch: master
+  provider: heroku
+  api_key:
+    secure: RMhImQZbWJvcmXtzDy/BScOjBOspcfEpnkciNFmd/q86kljYnVw822NwXMgz247FFUWuWf0lQnTX1yyFCB/mMUZ4eZQ8J2PvF4CWOuejd4AVCc9IlaCIxNNZ7Ysg0yxnl+qxwprdEe7hkaZrOodCxbsVxHLPEz0N4zjWxVWtnmxKEryb0d0F+SeqRaz6BxY+2atdVJPeCMFnK3dYQbbD8Sgyp8NYjihIgHfZi5YLtLZ1ORacRhsY66SA61nVrmwp2znAIY5YiBmI458Z04qGiKyQU0M33HCTQTy21WahDYoa2qATz8FN70rTIJPFcpu62Ftr3aVBPMQSuMVq4EfMa9gO16XST5dYpiOX78KKXzo10sCqdQkZGcSXzKsBWcu6biwVglTCvLCJr0GQn2d9J8CT6kcC/8DnEzA3y4eKa8cmPrwnt+LsqoPuLipTjz+6ewpWD83OQpmvyZ03YrKUtRSgsOQSXFwPAsNjkuaN/uNqtODg1P0kvxWotQVCRtokutTvZNfu7IQOE07S1MN8XXg9pKdk35dgNADEGE5my5jvT7eHjFJK/z6Kj4hqtjRL4L7QKDcNvUjrfT1JNK5zQJxh8MRVXlhjFHoj9yJoqZiK/TRNza4voGrLjbd7C/8PijQuGc/DEcUiqhoVRrlSirQ93lHB+L2Dtzr7mq2WAvE=
+  app: erosado-swift-server
