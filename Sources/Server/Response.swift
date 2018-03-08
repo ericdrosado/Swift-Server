@@ -36,9 +36,8 @@ public class Response {
     } 
 
     private func handleHello(request: Request) -> String {
-        let sortedQueries = request.sortHelloQueries(queries: request.queries)
-        let helloRequest = Request(method: request.method, path: request.path, queries: sortedQueries)
-        let body = prepareBody(body: "Hello \(buildBody(request: helloRequest))", method: request.method)
+        let helloRequest = Request(method: request.method, path: request.path, queries: request.queries)
+        let body = prepareBody(body: "Hello \(buildHelloBody(request: helloRequest))", method: request.method)
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
@@ -96,17 +95,23 @@ public class Response {
                 .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
                 .joined(separator: " ")
     }
-    
-    private func buildBody(request: Request) -> String {
-        var queries = [String]()
-        for (_, value) in request.queries {
-            queries.append(value)    
-        }
+
+    private func buildHelloBody(request: Request) -> String {
+        var queries = [String()]                                                                                         
+        var queryKeys = ["fname","mname", "lname"]                                                                       
+        for index in 0...queryKeys.count-1 {
+            for (key, value) in request.queries {                                                                        
+                if (key == queryKeys[index]) {
+                    queries.append(value)
+                } 
+            }
+        }                                                                                                            
         return queries
-                .filter({$0 != ""})
-                .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
-                .joined(separator: " ")
+               .filter({$0 != ""})
+               .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
+               .joined(separator: " ")
     }
+    
 }
 
 
