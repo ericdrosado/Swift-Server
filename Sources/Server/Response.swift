@@ -74,9 +74,24 @@ public class Response {
     }
 
     private func handleForm(request: Request) -> String {
+        writePost(request: request)
         let body = ""
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
+    }
+
+    private func writePost(request: Request) {
+        let file = "Server/SwiftServer/log.txt"
+        let requestText = request.body
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let path = dir.appendingPathComponent(file)
+            do {
+                try requestText.write(to: path, atomically: false,
+                encoding: String.Encoding.utf8)
+            } catch {
+                print("Error: \(error)")
+            }
+        }
     }
     
     private func prepareBody(body: String, method: String) -> String {

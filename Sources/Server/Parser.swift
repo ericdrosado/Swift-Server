@@ -5,7 +5,6 @@ public class Parser {
     public init(){}
 
     public func parseRequest(request: String) -> Request {
-        print(request)
         var (requestLineComponents, requestHeaders, requestBody) = parseRequestMessage(request: request)
         let headers = parseHeaders(requestHeaders: requestHeaders)
         if (requestLineComponents[1].contains("?")) {
