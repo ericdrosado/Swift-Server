@@ -3,7 +3,7 @@ import Foundation
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect]
+    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm]
     let status200: String
     let status404: String
     let status404Body: String
@@ -70,6 +70,12 @@ public class Response {
     private func handleRedirect(request: Request) -> String {
         let body = prepareBody(body: "Hello World", method: request.method)
         let header = "HTTP/1.1 302\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\nLocation: /\r\n\r\n" 
+        return header + body
+    }
+
+    private func handleForm(request: Request) -> String {
+        let body = ""
+        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
     
