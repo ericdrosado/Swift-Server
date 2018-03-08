@@ -109,4 +109,13 @@ class ResponseTest: XCTestCase {
         XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
     }
 
+    func testBuildResponseWillReturnPOSTResponse() {
+        let request = "POST /form\r\nConnection: Keep-Alive\r\n\r\n\"My\"=\"Data\""
+        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+
+        let parsedRequest = parser.parseRequest(request: request)
+
+        XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
+    }
+
 }
