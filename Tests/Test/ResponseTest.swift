@@ -12,6 +12,17 @@ class ResponseTest: XCTestCase {
     let header404 = "HTTP/1.1 404 Not Found\r\nContent-Length: \(body404.utf8.count)\r\nContent-type: text/html\r\n\r\n"
     let header200HEAD = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
     let header404HEAD = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+    
+    private func readText() -> String {
+        let filePath = NSURL.fileURL(withPath: "log.txt")
+        var logData: String = String()
+            do {
+                logData = try String(contentsOf: filePath, encoding: String.Encoding.utf8) 
+            } catch {
+                print("Error: \(error)")
+            }
+        return logData
+    }
 
     func testBuildResponseWillReturnGETResponse() {
         let request = "GET / " + requestHeader 
@@ -116,6 +127,29 @@ class ResponseTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request)
 
         XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
+    }
+
+    func testBuildResponseWillReturnPUTResponse() {
+        let request = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\"My\"=\"Foo\""
+        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+
+        let parsedRequest = parser.parseRequest(request: request)
+
+        XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
+    }
+
+    func testBuildResponseWillWritePOSTAndPUTToFile() {
+        let request1 = "POST /form\r\nConnection: Keep-Alive\r\n\r\n\"My\"=\"Data\""
+        let parsedRequest = parser.parseRequest(request: request1) 
+        response.buildResponse(request: parsedRequest)
+        let firstRequestData = readText() 
+
+        let request2 = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\"My\"=\"Foo\"" 
+        let parsedRequest2 = parser.parseRequest(request: request2) 
+        response.buildResponse(request: parsedRequest2)
+        let secondRequestData = readText()
+
+        XCTAssertNotEqual(firstRequestData, secondRequestData)
     }
 
 }

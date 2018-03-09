@@ -74,24 +74,52 @@ public class Response {
     }
 
     private func handleForm(request: Request) -> String {
-        writePost(request: request)
+        let filePath = NSURL.fileURL(withPath: "log.txt")
+        if (request.method == "POST") {
+            writeText(requestBody: request.body, path: filePath)
+        } else {
+            let rawLogData = readText(path: filePath)
+            let updatedData = getUpdatedText(data: rawLogData, bodyText: request.body) 
+            writeText(requestBody: updatedData, path: filePath)     
+        }
         let body = ""
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
 
-    private func writePost(request: Request) {
-        let file = "Server/SwiftServer/log.txt"
-        let requestText = request.body
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let path = dir.appendingPathComponent(file)
+    private func writeText(requestBody: [String: String], path: URL) {
+        let text =  requestBody.map{ "\($0)=\($1)" }.joined(separator:"\n")
             do {
-                try requestText.write(to: path, atomically: false,
+                try text.write(to: path, atomically: false,
                 encoding: String.Encoding.utf8)
             } catch {
                 print("Error: \(error)")
             }
+    }
+
+    private func readText(path: URL) -> String {
+        var logData: String = String()
+            do {
+                logData = try String(contentsOf: path, encoding: String.Encoding.utf8) 
+            } catch {
+                print("Error: \(error)")
+            }
+        return logData
+    }
+
+    private func getUpdatedText(data: String, bodyText: [String: String]) -> [String: String] {
+        var logData: [String: String] = [:]
+        let lineData = data.components(separatedBy: "\n")
+        for text in lineData {
+            let loggedData = text.split(separator: "=")
+            logData[String(loggedData[0])] = String(loggedData[1])
         }
+        for (key, _) in logData {
+            if (key == Array(bodyText.keys)[0]) {
+                logData[key] = bodyText[key]
+            }
+        } 
+        return logData
     }
     
     private func prepareBody(body: String, method: String) -> String {

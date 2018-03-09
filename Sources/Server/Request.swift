@@ -2,11 +2,11 @@ public struct Request {
 
      let method: String
      let path: String
-     var body: String = String()
+     var body: [String: String] = [String(): String()]
      var queries: [String: String] = ["greeting": "World"]
      var cookie: String = String()  
 
-     init(method: String, path: String, body: String) {
+     init(method: String, path: String, body: [String: String]) {
          self.method = method
          self.path = path
          self.body = body
