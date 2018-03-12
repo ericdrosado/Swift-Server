@@ -26,7 +26,7 @@ public class Server {
                 try connectedSocket.write(from: requestResponse)
                 connectedSocket.close()
             } catch {
-                print("Error: \(error)")
+                print("Error while accepting client connection. \(error)")
             }
         } while acceptNewConnection
     }

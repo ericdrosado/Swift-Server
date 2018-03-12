@@ -12,6 +12,17 @@ class ResponseTest: XCTestCase {
     let header404 = "HTTP/1.1 404 Not Found\r\nContent-Length: \(body404.utf8.count)\r\nContent-type: text/html\r\n\r\n"
     let header200HEAD = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
     let header404HEAD = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+    
+    private func readText() -> String {
+        let filePath = NSURL.fileURL(withPath: "data.txt")
+        var logData: String = String()
+            do {
+                logData = try String(contentsOf: filePath, encoding: String.Encoding.utf8) 
+            } catch {
+                print("Error reading data.txt. \(error)")
+            }
+        return logData
+    }
 
     func testBuildResponseWillReturnGETResponse() {
         let request = "GET / " + requestHeader 
@@ -116,6 +127,37 @@ class ResponseTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request)
 
         XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
+    }
+
+    func testBuildResponseWillReturnPUTResponse() {
+        let request = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\"My\"=\"Foo\""
+        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+
+        let parsedRequest = parser.parseRequest(request: request)
+
+        XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
+    }
+
+    func testBuildResponseWillPostBodyToFile() {
+        let body = "My=Data"
+        let request = "POST /form\r\nConnection: Keep-Alive\r\n\r\n\(body)"
+
+        let parsedRequest = parser.parseRequest(request: request) 
+        let _ = response.buildResponse(request: parsedRequest)
+        let dataFromFile = readText() 
+
+        XCTAssertEqual(body, dataFromFile)
+    }
+
+    func testBuildResponseWillAlterFileWithPutBody() {
+        let body = "My=Foo"
+        let request = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\(body)" 
+
+        let parsedRequest = parser.parseRequest(request: request) 
+        let _ = response.buildResponse(request: parsedRequest)
+        let dataFromFile = readText()
+
+        XCTAssertEqual(body, dataFromFile)
     }
 
 }

@@ -19,13 +19,27 @@ public class Parser {
         }
     }
 
-    private func parseRequestMessage(request: String) -> (Array<String>, Array<String>, String) {
+    private func parseRequestMessage(request: String) -> (Array<String>, Array<String>, [String: String]) {
         let majorComponents = request.components(separatedBy: "\r\n\r\n")
-        let body = majorComponents[1].replacingOccurrences(of: "\"", with: "") 
+        var body = [String(): String()]
+        if (majorComponents[1] != "") {
+            body = parseBody(rawBody: majorComponents[1])
+        }
         let requestComponents = majorComponents[0].components(separatedBy: "\r\n").filter{$0 != ""}
         let requestHeaders: [String] = Array(requestComponents[1..<requestComponents.count]) 
         let requestLineComponents: [String] = Array(requestComponents[0].split(separator: " ").map{String($0)}) 
         return (requestLineComponents, requestHeaders, body)
+    }
+
+    private func parseBody(rawBody: String) -> [String: String] {
+        var bodyData: [String: String] = [:] 
+        let body = rawBody.replacingOccurrences(of: "\"", with: "")  
+        let lineData = body.components(separatedBy: "\n")
+        for data in lineData {
+            let loggedData = data.split(separator: "=")
+            bodyData[String(loggedData[0])] = String(loggedData[1])
+        }
+        return bodyData
     }
 
     private func parsePath(path: String) -> Array<String> {
