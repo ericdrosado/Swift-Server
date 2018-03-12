@@ -3,11 +3,13 @@ public struct Request {
      let method: String
      let path: String
      var queries: [String: String] = ["fname": "World"]
+     var body: String = String()
      var cookie: String = String()  
 
-     init(method: String, path: String) {
+     init(method: String, path: String, body: String) {
          self.method = method
          self.path = path
+         self.body = body
      }
 
      init(method: String, path: String, queries: [String: String]) {

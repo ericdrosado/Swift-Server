@@ -5,7 +5,7 @@ public class Parser {
     public init(){}
 
     public func parseRequest(request: String) -> Request {
-        var (requestLineComponents, requestHeaders) = parseRequestMessage(request: request)
+        var (requestLineComponents, requestHeaders, requestBody) = parseRequestMessage(request: request)
         let headers = parseHeaders(requestHeaders: requestHeaders)
         if (requestLineComponents[1].contains("?")) {
             let parsedPathWithQueries = parsePath(path: String(requestLineComponents[1]))
@@ -15,15 +15,17 @@ public class Parser {
             let cookie = parseCookie(headers: headers)
             return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), cookie: cookie["type"]!) 
         } else {
-            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]))
+            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), body: requestBody)
         }
     }
 
-    private func parseRequestMessage(request: String) -> (Array<String>, Array<String>) {
-        let requestComponents = request.components(separatedBy: "\r\n").filter{$0 != ""}
+    private func parseRequestMessage(request: String) -> (Array<String>, Array<String>, String) {
+        let majorComponents = request.components(separatedBy: "\r\n\r\n")
+        let body = majorComponents[1].replacingOccurrences(of: "\"", with: "") 
+        let requestComponents = majorComponents[0].components(separatedBy: "\r\n").filter{$0 != ""}
         let requestHeaders: [String] = Array(requestComponents[1..<requestComponents.count]) 
         let requestLineComponents: [String] = Array(requestComponents[0].split(separator: " ").map{String($0)}) 
-        return (requestLineComponents, requestHeaders)
+        return (requestLineComponents, requestHeaders, body)
     }
 
     private func parsePath(path: String) -> Array<String> {

@@ -3,7 +3,7 @@ import Foundation
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect]
+    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm]
     let status200: String
     let status404: String
     let status404Body: String
@@ -70,6 +70,27 @@ public class Response {
         let body = prepareBody(body: "Hello World", method: request.method)
         let header = "HTTP/1.1 302\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\nLocation: /\r\n\r\n" 
         return header + body
+    }
+
+    private func handleForm(request: Request) -> String {
+        writePost(request: request)
+        let body = ""
+        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
+        return header + body
+    }
+
+    private func writePost(request: Request) {
+        let file = "Server/SwiftServer/log.txt"
+        let requestText = request.body
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let path = dir.appendingPathComponent(file)
+            do {
+                try requestText.write(to: path, atomically: false,
+                encoding: String.Encoding.utf8)
+            } catch {
+                print("Error: \(error)")
+            }
+        }
     }
     
     private func prepareBody(body: String, method: String) -> String {
