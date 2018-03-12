@@ -74,7 +74,7 @@ public class Response {
     }
 
     private func handleForm(request: Request) -> String {
-        let filePath = NSURL.fileURL(withPath: "log.txt")
+        let filePath = NSURL.fileURL(withPath: "data.txt")
         if (request.method == "POST") {
             writeText(requestBody: request.body, path: filePath)
         } else {
@@ -93,7 +93,7 @@ public class Response {
                 try text.write(to: path, atomically: false,
                 encoding: String.Encoding.utf8)
             } catch {
-                print("Error: \(error)")
+                print("Error writing to data.txt. \(error)")
             }
     }
 
@@ -102,7 +102,7 @@ public class Response {
             do {
                 logData = try String(contentsOf: path, encoding: String.Encoding.utf8) 
             } catch {
-                print("Error: \(error)")
+                print("Error reading data.txt. \(error)")
             }
         return logData
     }
