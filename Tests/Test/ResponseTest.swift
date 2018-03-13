@@ -13,6 +13,21 @@ class ResponseTest: XCTestCase {
     let header200HEAD = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
     let header404HEAD = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
     
+    private func createTempFile() {
+        let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+        let path: String = filePath!.path
+        FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
+    }
+
+    private func removeTempFile() {
+        do {
+            let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+            try FileManager.default.removeItem(at: filePath!) 
+        } catch {
+            print("Error temp file was not deleted. \(error)")
+        }
+    }
+    
     private func readText() -> String {
         let filePath = NSURL.fileURL(withPath: "data.txt")
         var logData: String = String()
@@ -139,6 +154,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillPostBodyToFile() {
+        createTempFile()
+
         let body = "My=Data"
         let request = "POST /form\r\nConnection: Keep-Alive\r\n\r\n\(body)"
 
@@ -147,17 +164,25 @@ class ResponseTest: XCTestCase {
         let dataFromFile = readText() 
 
         XCTAssertEqual(body, dataFromFile)
+        removeTempFile()
     }
 
     func testBuildResponseWillAlterFileWithPutBody() {
-        let body = "My=Foo"
-        let request = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\(body)" 
+        createTempFile()
 
-        let parsedRequest = parser.parseRequest(request: request) 
-        let _ = response.buildResponse(request: parsedRequest)
+        let request1 = "POST /form\r\nConnection: Keep-Alive\r\n\r\nMy=Bar"
+        let parsedRequest1 = parser.parseRequest(request: request1) 
+        let _ = response.buildResponse(request: parsedRequest1)
+
+        let body = "My=Foo"
+        let request2 = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\(body)" 
+        let parsedRequest2 = parser.parseRequest(request: request2) 
+        let _ = response.buildResponse(request: parsedRequest2)
+        
         let dataFromFile = readText()
 
         XCTAssertEqual(body, dataFromFile)
+        removeTempFile()
     }
 
 }
