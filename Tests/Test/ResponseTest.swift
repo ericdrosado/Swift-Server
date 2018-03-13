@@ -5,14 +5,22 @@ class ResponseTest: XCTestCase {
     
     let parser = Parser()
     let response = Response()
-    static let body200 = "<!DOCTYPE html><html><body><h1>Hello World</h1></body></html>"
-    static let body404 = "<!DOCTYPE html><html><body><h1>404 Page Not Found</h1></body></html>"
-    let requestHeader = "\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n"
-    let header200 = "HTTP/1.1 200 OK\r\nContent-Length: \(body200.utf8.count)\r\nContent-type: text/html\r\n\r\n"
-    let header404 = "HTTP/1.1 404 Not Found\r\nContent-Length: \(body404.utf8.count)\r\nContent-type: text/html\r\n\r\n"
-    let header200HEAD = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
-    let header404HEAD = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+    let status200 = "200 OK"
+    let status404 = "404 Not Found"
+    let queries = ["Person", "John", "Doe"]
     
+    private func buildRequest(method: String, route: String, body: String="") -> String {
+        return "\(method) \(route)\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
+    }
+
+    private func buildResponse(statusCode: String, body: String="") -> String {
+        return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\n\r\n\(body)" 
+    }
+
+    private func buildHTMLBody(content: String) -> String {
+        return "<!DOCTYPE html><html><body><h1>\(content)</h1></body></html>"
+    }
+
     private func readText() -> String {
         let filePath = NSURL.fileURL(withPath: "data.txt")
         var logData: String = String()
@@ -25,8 +33,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnGETResponse() {
-        let request = "GET / " + requestHeader 
-        let expectedResponse = header200 + ResponseTest.body200            
+        let request = buildRequest(method: "GET", route: "/")
+        let expectedResponse = buildResponse(statusCode: status200, body: buildHTMLBody(content: "Hello World"))
 
         let parsedRequest = parser.parseRequest(request: request)
         
@@ -34,8 +42,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnHEADResponse() {
-        let request = "HEAD / " + requestHeader 
-        let expectedResponse = header200HEAD 
+        let request = buildRequest(method: "HEAD", route: "/")
+        let expectedResponse = buildResponse(statusCode: status200)
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -43,17 +51,17 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturn404ResponseWithGET() {
-        let request = "GET /test " + requestHeader 
-        let expectedResponse = header404 + ResponseTest.body404            
-        
+        let request = buildRequest(method: "GET", route: "/fooBar")
+        let expectedResponse = buildResponse(statusCode: status404, body: buildHTMLBody(content: "404 Page Not Found"))        
+
         let parsedRequest = parser.parseRequest(request: request)
 
         XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
     }
 
     func testBuildResponseWillReturn404ResponseWithHEAD() {
-        let request = "HEAD /test " + requestHeader
-        let expectedResponse = header404HEAD 
+        let request = buildRequest(method: "HEAD", route: "/foobar")
+        let expectedResponse = buildResponse(statusCode: status404) 
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -61,9 +69,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnGETResponseWithQuery() {
-        let request = "GET /hello?fname=Person" + requestHeader
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 62\r\nContent-type: text/html\r\n\r\n"
- + "<!DOCTYPE html><html><body><h1>Hello Person</h1></body></html>"
+        let request = buildRequest(method: "GET", route: "/hello?fname=\(queries[0])")
+        let expectedResponse = buildResponse(statusCode: status200, body: buildHTMLBody(content: "Hello \(queries[0])") )
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -71,9 +78,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnGETResponseWith2Queries() {
-        let request = "GET /hello?mname=Person&lname=Doe" + requestHeader
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 66\r\nContent-type: text/html\r\n\r\n"
- + "<!DOCTYPE html><html><body><h1>Hello Person Doe</h1></body></html>"
+        let request = buildRequest(method: "GET", route: "/hello?mname=\(queries[0])&lname=\(queries[1])")
+        let expectedResponse = buildResponse(statusCode: status200, body: buildHTMLBody(content: "Hello \(queries[0]) \(queries[1])"))
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -81,9 +87,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnGETResponseWith3Queries() {
-        let request = "GET /hello?fname=Person&lname=Doe&mname=John" + requestHeader
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 71\r\nContent-type: text/html\r\n\r\n"
- + "<!DOCTYPE html><html><body><h1>Hello Person John Doe</h1></body></html>"
+        let request = buildRequest(method: "GET", route: "/hello?fname=\(queries[0])&lname=\(queries[2])&mname=\(queries[1])")
+        let expectedResponse = buildResponse(statusCode: status200, body: buildHTMLBody(content: "Hello \(queries[0]) \(queries[1]) \(queries[2])"))
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -91,9 +96,9 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnProperGETResponseWithQueryAfterAnInitialRequest() {
-        let request1 = "GET /hello?fname=Person" + requestHeader
-        let request2 = "GET /hello" + requestHeader
-        let expectedResponse = header200 + ResponseTest.body200 
+        let request1 = buildRequest(method: "GET", route: "/hello?fname=Person")
+        let request2 = buildRequest(method: "GET", route: "/hello") 
+        let expectedResponse = buildResponse(statusCode: status200, body: buildHTMLBody(content: "Hello World"))
 
         let parsedRequest1 = parser.parseRequest(request: request1)
         _ = response.buildResponse(request: parsedRequest1)
@@ -103,8 +108,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturn418Response() {
-        let request = "GET /coffee\r\nConnection: Keep-Alive\r\n\r\n"
-        let expectedResponse = "HTTP/1.1 418\r\nContent-Length: 12\r\nContent-type: text/html\r\n\r\nI'm a teapot"
+        let request = buildRequest(method: "GET", route: "/coffee")
+        let expectedResponse = buildResponse(statusCode: "418", body: "I'm a teapot")
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -112,17 +117,16 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillDecodeOperators() {
-        let request = "GET /parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F\r\nConnection: Keep-Alive\r\n\r\n"
-
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 127\r\nContent-type: text/html\r\n\r\n<!DOCTYPE html><html><body><h1>variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?</h1></body></html>" 
+        let request = buildRequest(method: "GET", route: "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F")
+        let expectedResponse = buildResponse(statusCode: status200, body: buildHTMLBody(content: "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?"))
         let parsedRequest = parser.parseRequest(request: request)
 
         XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
     }
 
     func testBuildResponseWillReturnPOSTResponse() {
-        let request = "POST /form\r\nConnection: Keep-Alive\r\n\r\n\"My\"=\"Data\""
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+        let request = buildRequest(method: "POST", route: "/form", body: "My=Data")
+        let expectedResponse = buildResponse(statusCode: status200)
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -130,8 +134,8 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillReturnPUTResponse() {
-        let request = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\"My\"=\"Foo\""
-        let expectedResponse = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-type: text/html\r\n\r\n"
+        let request = buildRequest(method: "PUT", route: "/form", body: "My=Data")
+        let expectedResponse = buildResponse(statusCode: status200)
 
         let parsedRequest = parser.parseRequest(request: request)
 
@@ -140,7 +144,7 @@ class ResponseTest: XCTestCase {
 
     func testBuildResponseWillPostBodyToFile() {
         let body = "My=Data"
-        let request = "POST /form\r\nConnection: Keep-Alive\r\n\r\n\(body)"
+        let request = buildRequest(method: "POST", route: "/form", body: body)
 
         let parsedRequest = parser.parseRequest(request: request) 
         let _ = response.buildResponse(request: parsedRequest)
@@ -151,7 +155,7 @@ class ResponseTest: XCTestCase {
 
     func testBuildResponseWillAlterFileWithPutBody() {
         let body = "My=Foo"
-        let request = "PUT /form\r\nConnection: Keep-Alive\r\n\r\n\(body)" 
+        let request = buildRequest(method: "PUT", route: "/form", body: body)
 
         let parsedRequest = parser.parseRequest(request: request) 
         let _ = response.buildResponse(request: parsedRequest)
