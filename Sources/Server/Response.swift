@@ -3,7 +3,7 @@ import Foundation
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm]
+    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2]
     let status200: String
     let status404: String
     let status404Body: String
@@ -120,6 +120,17 @@ public class Response {
         } 
         return logData
     }
+
+    private func handleOptions1(request: Request) -> String {
+        let body = ""
+        return buildHeader(statusCode: status200, contentLength: body.utf8.count, additionalHeaders: "Allow: GET,HEAD,POST,OPTIONS,PUT\r\n") 
+
+    }
+
+    private func handleOptions2(request: Request) -> String {
+        let body = ""
+        return buildHeader(statusCode: status200, contentLength: body.utf8.count, additionalHeaders: "Allow: GET,HEAD,OPTIONS\r\n") 
+    }
     
     private func prepareBody(body: String, method: String) -> String {
         if (method == "HEAD") {
@@ -129,8 +140,8 @@ public class Response {
         }
     }
 
-    private func buildHeader(statusCode: String, contentLength: Int) -> String {
-        return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
+    private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
+        return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
     }
 
     private func buildParameterBody(request: Request) -> String {

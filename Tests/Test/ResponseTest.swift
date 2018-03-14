@@ -9,12 +9,12 @@ class ResponseTest: XCTestCase {
     let status404 = "404 Not Found"
     let queries = ["Person", "John", "Doe"]
     
-    private func buildRequest(method: String, route: String, body: String="") -> String {
+    private func buildRequest(method: String, route: String, body: String = "") -> String {
         return "\(method) \(route)\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
     }
 
-    private func buildResponse(statusCode: String, body: String="") -> String {
-        return "HTTP/1.1 \(statusCode)\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\n\r\n\(body)" 
+    private func buildResponse(statusCode: String, additionalHeaders: String = "", body: String = "") -> String {
+        return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(body.utf8.count)\r\nContent-type: text/html\r\n\r\n\(body)" 
     }
 
     private func buildHTMLBody(content: String) -> String {
@@ -185,6 +185,24 @@ class ResponseTest: XCTestCase {
 
         XCTAssertEqual("My=Bar", dataFromFile)
         removeTempFile()
+    }
+
+    func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute() {
+        let request = buildRequest(method: "OPTIONS", route: "/method_options")
+        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,POST,OPTIONS,PUT\r\n")
+
+        let parsedRequest = parser.parseRequest(request: request)
+
+        XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
+    }
+
+    func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute2() {
+        let request = buildRequest(method: "OPTIONS", route: "/method_options2")
+        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,OPTIONS\r\n")
+
+        let parsedRequest = parser.parseRequest(request: request)
+
+        XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
     }
 
 }
