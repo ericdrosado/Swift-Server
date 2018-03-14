@@ -21,6 +21,21 @@ class ResponseTest: XCTestCase {
         return "<!DOCTYPE html><html><body><h1>\(content)</h1></body></html>"
     }
 
+    private func createTempFile() {
+        let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+        let path: String = filePath!.path
+        FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
+    }
+
+    private func removeTempFile() {
+        do {
+            let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+            try FileManager.default.removeItem(at: filePath!) 
+        } catch {
+            print("Error temp file was not deleted. \(error)")
+        }
+    }
+    
     private func readText() -> String {
         let filePath = NSURL.fileURL(withPath: "data.txt")
         var logData: String = String()
@@ -143,25 +158,33 @@ class ResponseTest: XCTestCase {
     }
 
     func testBuildResponseWillPostBodyToFile() {
-        let body = "My=Data"
-        let request = buildRequest(method: "POST", route: "/form", body: body)
+        createTempFile()
+
+        let request = buildRequest(method: "POST", route: "/form", body: "My=Data")
 
         let parsedRequest = parser.parseRequest(request: request) 
         let _ = response.buildResponse(request: parsedRequest)
         let dataFromFile = readText() 
 
-        XCTAssertEqual(body, dataFromFile)
+        XCTAssertEqual("My=Data", dataFromFile)
+        removeTempFile()
     }
 
     func testBuildResponseWillAlterFileWithPutBody() {
-        let body = "My=Foo"
-        let request = buildRequest(method: "PUT", route: "/form", body: body)
+        createTempFile()
 
-        let parsedRequest = parser.parseRequest(request: request) 
-        let _ = response.buildResponse(request: parsedRequest)
+        let request1 = buildRequest(method: "POST", route: "/form", body: "My=Foo")
+        let parsedRequest1 = parser.parseRequest(request: request1) 
+        let _ = response.buildResponse(request: parsedRequest1)
+
+        let request2 = buildRequest(method: "PUT", route: "/form", body: "My=Bar")
+        let parsedRequest2 = parser.parseRequest(request: request2) 
+        let _ = response.buildResponse(request: parsedRequest2)
+        
         let dataFromFile = readText()
 
-        XCTAssertEqual(body, dataFromFile)
+        XCTAssertEqual("My=Bar", dataFromFile)
+        removeTempFile()
     }
 
 }
