@@ -187,9 +187,18 @@ class ResponseTest: XCTestCase {
         removeTempFile()
     }
 
-    func testBuildResponseWillReturnOptionsResponse() {
+    func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute() {
         let request = buildRequest(method: "OPTIONS", route: "/method_options")
         let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,POST,OPTIONS,PUT\r\n")
+
+        let parsedRequest = parser.parseRequest(request: request)
+
+        XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
+    }
+
+    func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute2() {
+        let request = buildRequest(method: "OPTIONS", route: "/method_options2")
+        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,OPTIONS\r\n")
 
         let parsedRequest = parser.parseRequest(request: request)
 
