@@ -1,14 +1,17 @@
 import XCTest
+import Routes
 import Server
 
 class ResponseTest: XCTestCase {
     
     let parser = Parser()
-    let response = Response()
+    static let routes = ["/": Root()]
+    static let router = Router(routes: routes)
+    let response = Response(router: router)
     let status200 = "200 OK"
     let status404 = "404 Not Found"
     let queries = ["Person", "John", "Doe"]
-    
+                           
     private func buildRequest(method: String, route: String, body: String = "") -> String {
         return "\(method) \(route)\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
     }

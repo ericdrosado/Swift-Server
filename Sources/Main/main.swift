@@ -1,4 +1,5 @@
 import Foundation
+import Routes
 import Server
 import Utility
 
@@ -11,7 +12,9 @@ if (!FileManager.default.fileExists(atPath: path)) {
    FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
 }
 
-let parser = Parser()
-let response = Response() 
-let server = Server(parser: parser, port: port, response: response)
+let routes = ["/": Root()]
+let router = Router(routes: routes)
+let response = Response(router: router)
+
+let server = Server(parser: Parser(), port: port, response: response, router: router)
 try server.startServer()

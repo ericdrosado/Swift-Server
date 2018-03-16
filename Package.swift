@@ -11,12 +11,17 @@ let package = Package(
     targets: [
         .target(
             name:"Main",
-            dependencies: ["Server", "Utility"]),
+            dependencies: ["Routes","Server", "Utility"]),
+        .target(
+            name: "Request"),
+        .target(
+            name: "Routes",
+            dependencies: ["Request"]),
         .target(
             name: "Server",
-            dependencies: ["Socket"]),
+            dependencies: ["Request","Routes","Socket"]),
         .testTarget(
             name:"Test", 
-            dependencies: ["Server"])
+            dependencies: ["Request", "Server"])
     ]
 )

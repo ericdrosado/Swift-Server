@@ -1,21 +1,26 @@
 import Foundation
+import Request
 
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/": handleRoot,"/hello": handleHello,"/coffee": handleCoffee, "/tea": handleRoot, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2]
+    var paths: [String: PathHandler] = ["/hello": handleHello, "/tea": handleTea, "/coffee": handleCoffee, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
+    let router: Router
     let status200: String
     let status404: String
     let status404Body: String
 
-    public init(){
+    public init(router: Router){
+        self.router = router
         self.status200 = "200 OK"
         self.status404 = "404 Not Found"
         self.status404Body = "404 Page Not Found"
     }
 
     public func buildResponse(request: Request) -> String {
-        if (paths.keys.contains(request.path)) {
+        if (request.path == "/") {
+            return router.handleRoute(request: request)
+        } else if (paths.keys.contains(request.path)) {
             return paths[request.path]!(self)(request)
         } else {
             return handle404(request: request)
@@ -28,16 +33,15 @@ public class Response {
         return header + body
     }
 
-    private func handleRoot(request: Request) -> String {
-        var body = request.path == "/" ? "Hello World": String()
-        body = prepareBody(body: body, method: request.method)
-        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
-        return header + body
-    } 
-
     private func handleHello(request: Request) -> String {
         let helloRequest = Request(method: request.method, path: request.path, queries: request.queries)
         let body = prepareBody(body: "Hello \(buildHelloBody(request: helloRequest))", method: request.method)
+        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
+        return header + body
+    }
+
+    private func handleTea(request: Request) -> String {
+        let body = ""
         let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
         return header + body
     }
