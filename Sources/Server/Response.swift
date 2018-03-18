@@ -18,12 +18,10 @@ public class Response {
     }
 
     public func buildResponse(request: Request) -> String {
-        if (request.path == "/") {
-            return router.handleRoute(request: request)
-        } else if (paths.keys.contains(request.path)) {
+        if (paths.keys.contains(request.path)) {
             return paths[request.path]!(self)(request)
         } else {
-            return handle404(request: request)
+            return router.handleRoute(request: request)
         }
     }
 
