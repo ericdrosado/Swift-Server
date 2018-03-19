@@ -7,11 +7,13 @@ public class Server {
     private let parser: Parser
     private let port: Int
     let response: Response
+    let router: Router
 
-    public init(parser: Parser, port: Int, response: Response) {
+    public init(parser: Parser, port: Int, response: Response, router: Router) {
         self.parser = parser
         self.port = port
         self.response = response  
+        self.router = router
     }
 
     public func startServer() throws {
