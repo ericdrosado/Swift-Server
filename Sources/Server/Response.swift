@@ -4,13 +4,13 @@ import Request
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/hello": handleHello, "/tea": handleTea, "/coffee": handleCoffee, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
+    var paths: [String: PathHandler] = ["/tea": handleTea, "/coffee": handleCoffee, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
     let router: Router
     let status200: String
     let status404: String
     let status404Body: String
 
-    public init(router: Router){
+    public init(router: Router) {
         self.router = router
         self.status200 = "200 OK"
         self.status404 = "404 Not Found"
@@ -23,19 +23,6 @@ public class Response {
         } else {
             return router.handleRoute(request: request)
         }
-    }
-
-    private func handle404(request: Request) -> String {
-        let body = prepareBody(body: status404Body, method: request.method) 
-        let header = buildHeader(statusCode: status404, contentLength: body.utf8.count) 
-        return header + body
-    }
-
-    private func handleHello(request: Request) -> String {
-        let helloRequest = Request(method: request.method, path: request.path, queries: request.queries)
-        let body = prepareBody(body: "Hello \(buildHelloBody(request: helloRequest))", method: request.method)
-        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
-        return header + body
     }
 
     private func handleTea(request: Request) -> String {

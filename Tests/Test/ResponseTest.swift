@@ -5,7 +5,7 @@ import Server
 class ResponseTest: XCTestCase {
     
     let parser = Parser()
-    static let routes = ["/": Root()]
+    static let routes: [String: Route] = ["/": Root(), "/hello": Hello()]
     static let router = Router(routes: routes)
     let response = Response(router: router)
     let status200 = "200 OK"
