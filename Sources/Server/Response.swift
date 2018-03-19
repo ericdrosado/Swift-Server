@@ -4,7 +4,7 @@ import Request
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
+    var paths: [String: PathHandler] = ["/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
     let router: Router
     let status200: String
     let status404: String
@@ -23,18 +23,6 @@ public class Response {
         } else {
             return router.handleRoute(request: request)
         }
-    }
-
-    private func handleCoffee(request: Request) -> String {
-        let body = "I'm a teapot"
-        let header = buildHeader(statusCode: "418", contentLength: body.utf8.count)
-        return header + body
-    }
-
-    private func handleParameters(request: Request) -> String {
-        var body = prepareBody(body: "\(buildParameterBody(request: request))", method: request.method)
-        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
-        return header + body
     }
 
     private func handleCookie(request: Request) -> String {
@@ -125,18 +113,6 @@ public class Response {
 
     private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
         return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
-    }
-
-    private func buildParameterBody(request: Request) -> String {
-         var queries = [String]()
-         for (key, value) in request.queries {
-             queries.append(key + " = ")
-             queries.append(value)    
-         }
-         return queries
-                .filter({$0 != ""})
-                .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
-                .joined(separator: " ")
     }
 
     private func buildHelloBody(request: Request) -> String {
