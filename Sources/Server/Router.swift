@@ -7,9 +7,9 @@ public class Router {
     let routes: [String: Route]
     let fourOhFour: FourOhFour
 
-    public init(routes: [String: Route]) {
+    public init(routes: [String: Route], fourOhFour: FourOhFour) {
         self.routes = routes 
-        self.fourOhFour = FourOhFour()
+        self.fourOhFour = fourOhFour
     }
 
     public func handleRoute(request: Request) -> String {

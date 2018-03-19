@@ -5,8 +5,9 @@ import Server
 class ResponseTest: XCTestCase {
     
     let parser = Parser()
-    static let routes: [String: Route] = ["/": Root(), "/hello": Hello(), "/tea": Tea(), "/coffee": Coffee(), "/parameters": Parameters(), "/cookie": Cookie(), "/eat_cookie": EatCookie(), "/redirect": Redirect(), "/form": Form(), "/method_options": MethodOptions(), "/method_options2": MethodOptions2()]
-    static let router = Router(routes: routes)
+    static let routes = Routes.routes
+    static let fourOhFour = FourOhFour()
+    static let router = Router(routes: routes, fourOhFour: fourOhFour)
     let response = Response(router: router)
     let status200 = "200 OK"
     let status404 = "404 Not Found"
