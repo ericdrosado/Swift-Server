@@ -4,7 +4,7 @@ import Request
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
+    var paths: [String: PathHandler] = ["/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
     let router: Router
     let status200: String
     let status404: String
@@ -23,18 +23,6 @@ public class Response {
         } else {
             return router.handleRoute(request: request)
         }
-    }
-
-    private func handleEatCookie(request: Request) -> String {
-        let body = "mmmm \(request.cookie)"
-        let header = buildHeader(statusCode: status200, contentLength: body.utf8.count)
-        return header + body
-    }
-
-    private func handleRedirect(request: Request) -> String {
-        let body = prepareBody(body: "Hello World", method: request.method)
-        let header = "HTTP/1.1 302\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\nLocation: /\r\n\r\n" 
-        return header + body
     }
 
     private func handleForm(request: Request) -> String {

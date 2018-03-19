@@ -12,7 +12,7 @@ if (!FileManager.default.fileExists(atPath: path)) {
    FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
 }
 
-let routes: [String: Route] = ["/": Root(), "/hello": Hello(), "/tea": Tea(), "/coffee": Coffee(), "/parameters": Parameters(), "/cookie": Cookie(), "/eat_cookie": EatCookie()]
+let routes: [String: Route] = ["/": Root(), "/hello": Hello(), "/tea": Tea(), "/coffee": Coffee(), "/parameters": Parameters(), "/cookie": Cookie(), "/eat_cookie": EatCookie(), "/redirect": Redirect()]
 let router = Router(routes: routes)
 let response = Response(router: router)
 
