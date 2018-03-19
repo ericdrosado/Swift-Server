@@ -4,7 +4,7 @@ import Request
 public class Response {
 
     typealias PathHandler = (Response) -> (Request) -> String
-    var paths: [String: PathHandler] = ["/coffee": handleCoffee, "/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
+    var paths: [String: PathHandler] = ["/parameters": handleParameters, "/cookie": handleCookie, "/eat_cookie": handleEatCookie, "/redirect": handleRedirect, "/form": handleForm, "/method_options": handleOptions1, "/method_options2": handleOptions2] 
     let router: Router
     let status200: String
     let status404: String
