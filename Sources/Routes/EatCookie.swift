@@ -6,7 +6,10 @@ public class EatCookie: Route {
     public init(){}
 
     public func handleRoute(request: Request) -> String {
-        let body = "mmmm \(request.cookie)"
+        var body = ""
+        if let cookie = request.cookie {
+            body = "mmmm \(cookie)"
+        }
         let header = buildHeader(statusCode: "200 OK", contentLength: body.utf8.count)
         return header + body
     }
