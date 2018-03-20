@@ -14,7 +14,7 @@ class ResponseTest: XCTestCase {
     let queries = ["Person", "John", "Doe"]
                            
     private func buildRequest(method: String, route: String, body: String = "") -> String {
-        return "\(method) \(route)\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
+        return "\(method) \(route) HTTP/1.1\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
     }
 
     private func buildResponse(statusCode: String, additionalHeaders: String = "", body: String = "") -> String {
@@ -26,14 +26,14 @@ class ResponseTest: XCTestCase {
     }
 
     private func createTempFile() {
-        let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+        let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
         let path: String = filePath!.path
         FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
     }
 
     private func removeTempFile() {
         do {
-            let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+            let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
             try FileManager.default.removeItem(at: filePath!) 
         } catch {
             print("Error temp file was not deleted. \(error)")

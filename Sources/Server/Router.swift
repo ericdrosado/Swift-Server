@@ -16,8 +16,20 @@ public class Router {
         if (routes.keys.contains(request.path)) {
             return routes[request.path]!.handleRoute(request: request)
         } else {
+            logNonExistingRoutes(request: request)
             return fourOhFour.handleRoute(request:request) 
         }
     }
 
+    public func logNonExistingRoutes(request: Request) {
+        let filePath = NSURL.fileURL(withPathComponents: ["requestLog.txt"])
+        if let outputStream = OutputStream(url: filePath!, append: true) { 
+            outputStream.open()
+            let text = "\(request.method) \(request.path) \(request.httpVersion)"
+            outputStream.write(text, maxLength: text.count)
+            outputStream.close()
+        } else {
+            print("Unable to open and write to file")
+        }
+    }
 }

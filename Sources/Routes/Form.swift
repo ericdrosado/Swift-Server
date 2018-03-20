@@ -21,12 +21,12 @@ public class Form: Route {
 
     private func writeText(requestBody: [String: String], path: URL) {
         let text =  requestBody.map{ "\($0)=\($1)" }.joined(separator:"\n")
-            do {
-                try text.write(to: path, atomically: false,
-                encoding: String.Encoding.utf8)
-            } catch {
-                print("Error writing to data.txt. \(error)")
-            }
+        do {
+            try text.write(to: path, atomically: false,
+            encoding: String.Encoding.utf8)
+        } catch {
+            print("Error writing to data.txt. \(error)")
+        }
     }
 
     private func readText(path: URL) -> String {
@@ -34,7 +34,7 @@ public class Form: Route {
             do {
                 logData = try String(contentsOf: path, encoding: String.Encoding.utf8) 
             } catch {
-                print("Error reading data.txt. \(error)")
+                print("Error reading text file. \(error)")
             }
         return logData
     }

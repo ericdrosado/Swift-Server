@@ -6,8 +6,8 @@ public class Hello: Route {
     public init() {}
 
     public func handleRoute(request: Request) -> String {
-        let helloRequest = Request(method: request.method, path: request.path, queries: request.queries)
-        let body = prepareBody(body: "Hello \(buildHelloBody(request: helloRequest))", method: request.method)
+        let defaultText = "World"
+        let body = prepareBody(body: "Hello \(buildHelloBody(request: request) ?? defaultText)", method: request.method)
         let header = buildHeader(statusCode: "200 OK", contentLength: body.utf8.count)
         return header + body
     }
@@ -20,7 +20,7 @@ public class Hello: Route {
         }
     }
 
-    private func buildHelloBody(request: Request) -> String {
+    private func buildHelloBody(request: Request) -> String? {
         var queries = [String()]                                                                                         
         var queryKeys = ["fname","mname", "lname"]                                                                       
         for index in 0...queryKeys.count-1 {
@@ -30,11 +30,13 @@ public class Hello: Route {
                 } 
             }
         }  
-
-        return queries
-               .filter({$0 != ""})
-               .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
-               .joined(separator: " ")
+        var queryString: String?
+        queryString = queries
+                .filter({$0 != ""})
+                .map({$0.trimmingCharacters(in:.whitespacesAndNewlines)})
+                .joined(separator: " ")
+        if queryString == "" { queryString = nil }
+        return queryString
     }
 
     private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
