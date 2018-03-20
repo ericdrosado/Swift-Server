@@ -29,7 +29,7 @@ class LogsTest: XCTestCase {
 
     }
 
-    func testHandleRouteWillNotReturn401Response() { 
+    func testHandleRouteWillNotReturn401ResponseIfAuthorizationHeaderIsPassed() { 
         let request = buildRequest(method: "GET", route: "/logs", additionalHeaders: authorizationHeader)    
         let responseWith401Status = buildResponse(statusCode: status401, additionalHeaders: authenticationHeader)
 

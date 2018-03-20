@@ -6,10 +6,13 @@ import Utility
 let utility = try CLIUtility()
 let port = utility.getPortNumber()
 
-let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
-let path: String = filePath!.path
-if (!FileManager.default.fileExists(atPath: path)) {
-   FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
+let files = ["data.txt", "requestLog.txt"]
+for file in files {
+    let filePath = NSURL.fileURL(withPathComponents: [file])
+    let path: String = filePath!.path
+    if (!FileManager.default.fileExists(atPath: path)) {
+        FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
+    }
 }
 
 let routes = Routes.routes

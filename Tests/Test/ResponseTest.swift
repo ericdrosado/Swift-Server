@@ -26,14 +26,14 @@ class ResponseTest: XCTestCase {
     }
 
     private func createTempFile() {
-        let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+        let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
         let path: String = filePath!.path
         FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
     }
 
     private func removeTempFile() {
         do {
-            let filePath = NSURL.fileURL(withPathComponents: ["temp.txt"])
+            let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
             try FileManager.default.removeItem(at: filePath!) 
         } catch {
             print("Error temp file was not deleted. \(error)")

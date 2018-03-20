@@ -10,7 +10,7 @@ public struct Request {
      public var cookie: String  
      public var headers: [String: String]
 
-     public init(method: String, path: String, http: String = String(), queries: [String: String] = ["fname": "World"], body: [String: String] = [String(): String()], cookie: String = String(), headers: [String: String] = [String(): String()]) {
+     public init(method: String, path: String, http: String = String(), queries: [String: String] = ["fname": "World"], body: [String: String] = [:], cookie: String = String(), headers: [String: String] = [:]) {
          self.method = method
          self.path = path
          self.http = http
