@@ -25,7 +25,7 @@ public class Router {
         let filePath = NSURL.fileURL(withPathComponents: ["requestLog.txt"])
         if let outputStream = OutputStream(url: filePath!, append: true) { 
             outputStream.open()
-            let text = "\(request.method) \(request.path) \(request.http)"
+            let text = "\(request.method) \(request.path) \(request.httpVersion)"
             outputStream.write(text, maxLength: text.count)
             outputStream.close()
         } else {

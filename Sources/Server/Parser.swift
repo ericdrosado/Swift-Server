@@ -11,12 +11,12 @@ public class Parser {
         if (requestLineComponents[1].contains("?")) {
             let parsedPathWithQueries = parsePath(path: String(requestLineComponents[1]))
             let queries = parseAllQueries(parsedQuery: parsedPathWithQueries[1])
-            return Request(method: String(requestLineComponents[0]), path: parsedPathWithQueries[0], queries: queries) 
+            return Request(method: String(requestLineComponents[0]), path: parsedPathWithQueries[0], httpVersion: String(requestLineComponents[2]), queries: queries) 
         } else if (headers.keys.contains("Cookie")) {
             let cookie = parseCookie(headers: headers)
-            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), cookie: cookie["type"]!) 
+            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), cookie: cookie["type"]!) 
         } else {
-            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), http: String(requestLineComponents[2]), body: requestBody, headers: headers)
+            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), body: requestBody, headers: headers)
         }
     }
 

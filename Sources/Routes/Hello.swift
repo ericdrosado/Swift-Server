@@ -6,7 +6,7 @@ public class Hello: Route {
     public init() {}
 
     public func handleRoute(request: Request) -> String {
-        let helloRequest = Request(method: request.method, path: request.path, queries: request.queries)
+        let helloRequest = Request(method: request.method, path: request.path, httpVersion: request.httpVersion, queries: request.queries)
         let body = prepareBody(body: "Hello \(buildHelloBody(request: helloRequest))", method: request.method)
         let header = buildHeader(statusCode: "200 OK", contentLength: body.utf8.count)
         return header + body
