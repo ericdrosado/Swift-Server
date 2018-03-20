@@ -16,7 +16,7 @@ public class Parser {
             let cookie = parseCookie(headers: headers)
             return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), cookie: cookie["type"]!) 
         } else {
-            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), body: requestBody)
+            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), http: String(requestLineComponents[2]), body: requestBody, headers: headers)
         }
     }
 

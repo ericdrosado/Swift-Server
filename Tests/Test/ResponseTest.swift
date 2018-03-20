@@ -14,7 +14,7 @@ class ResponseTest: XCTestCase {
     let queries = ["Person", "John", "Doe"]
                            
     private func buildRequest(method: String, route: String, body: String = "") -> String {
-        return "\(method) \(route)\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
+        return "\(method) \(route) HTTP/1.1\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
     }
 
     private func buildResponse(statusCode: String, additionalHeaders: String = "", body: String = "") -> String {

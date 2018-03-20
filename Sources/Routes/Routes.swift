@@ -14,5 +14,6 @@ public class Routes {
                                                  "/redirect": Redirect(),
                                                  "/form": Form(),
                                                  "/method_options": MethodOptions(),
-                                                 "/method_options2": MethodOptions2()]
+                                                 "/method_options2": MethodOptions2(),
+                                                 "/logs": Logs()]
 }
