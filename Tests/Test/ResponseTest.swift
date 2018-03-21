@@ -4,7 +4,7 @@ import Server
 
 class ResponseTest: XCTestCase {
     
-    let parser = Parser()
+    let parser = Parser(directory: "./cob_spec/public")
     static let routes = Routes.routes
     static let fourOhFour = FourOhFour()
     static let router = Router(routes: routes, fourOhFour: fourOhFour)
@@ -49,15 +49,6 @@ class ResponseTest: XCTestCase {
                 print("Error reading data.txt. \(error)")
             }
         return logData
-    }
-
-    func testBuildResponseWillReturnGETResponse() {
-        let request = buildRequest(method: "GET", route: "/")
-        let expectedResponse = buildResponse(statusCode: status200, body: buildHTMLBody(content: "Hello World"))
-
-        let parsedRequest = parser.parseRequest(request: request)
-        
-        XCTAssertEqual(expectedResponse, response.buildResponse(request: parsedRequest))
     }
 
     func testBuildResponseWillReturnHEADResponse() {

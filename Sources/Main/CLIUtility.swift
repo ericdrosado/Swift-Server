@@ -21,5 +21,9 @@ public class CLIUtility {
         return parsedArguments.get(port) ?? 5000
     }
 
+    public func getDirectory() -> String {
+        return parsedArguments.get(directory) ?? "./cob_spec/public"
+    }
+
 }
 
