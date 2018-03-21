@@ -2,6 +2,7 @@ import Foundation
 
 public struct Request {
 
+     public let directory: String
      public let method: String
      public let path: String
      public let httpVersion: String
@@ -10,7 +11,8 @@ public struct Request {
      public var cookie: String?  
      public var headers: [String: String]
 
-     public init(method: String, path: String, httpVersion: String, queries: [String: String] = [:], body: [String: String], cookie: String? = nil, headers: [String: String]) {
+     public init(directory: String, method: String, path: String, httpVersion: String, queries: [String: String] = [:], body: [String: String], cookie: String? = nil, headers: [String: String]) {
+         self.directory = directory
          self.method = method
          self.path = path
          self.httpVersion = httpVersion

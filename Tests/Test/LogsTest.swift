@@ -4,7 +4,7 @@ import Server
 
 class LogsTest: XCTestCase {
 
-    let parser = Parser()
+    let parser = Parser(directory: "./cob_spec/public")
     let logs = Logs()
     let status200 = "200 OK"
     let status401 = "401"

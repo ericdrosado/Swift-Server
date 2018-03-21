@@ -2,8 +2,12 @@ import Foundation
 import Request
 
 public class Parser {
+    
+    private let directory: String
 
-    public init(){}
+    public init(directory: String) {
+        self.directory = directory
+    }
 
     public func parseRequest(request: String) -> Request {
         var (requestLineComponents, requestHeaders, requestBody) = parseRequestMessage(request: request)
@@ -11,12 +15,12 @@ public class Parser {
         if (requestLineComponents[1].contains("?")) {
             let parsedPathWithQueries = parsePath(path: String(requestLineComponents[1]))
             let queries = parseAllQueries(parsedQuery: parsedPathWithQueries[1])
-            return Request(method: String(requestLineComponents[0]), path: parsedPathWithQueries[0], httpVersion: String(requestLineComponents[2]), queries: queries, body: requestBody, headers: headers) 
+            return Request(directory: directory, method: String(requestLineComponents[0]), path: parsedPathWithQueries[0], httpVersion: String(requestLineComponents[2]), queries: queries, body: requestBody, headers: headers) 
         } else if (headers.keys.contains("Cookie")) {
             let cookie = parseCookie(headers: headers)
-            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), body: requestBody, cookie: cookie["type"]!, headers: headers) 
+            return Request(directory: directory, method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), body: requestBody, cookie: cookie["type"]!, headers: headers) 
         } else {
-            return Request(method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), body: requestBody, headers: headers)
+            return Request(directory: directory, method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), body: requestBody, headers: headers)
         }
     }
 
