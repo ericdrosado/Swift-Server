@@ -5,30 +5,44 @@ public class Logs: Route {
 
     let userName: String
     let password: String
-    let authenticationHeader: String
+    let authentication: String
 
     public init(){
         self.userName = "admin"
         self.password = "hunter2"
-        self.authenticationHeader = "WWW-Authenticate: Basic realm= Access to logs"
+        self.authentication = "Basic realm= Access to logs"
     }
 
-    public func handleRoute(request: Request) -> String {
-        var body = String()
-        var header = buildHeader(statusCode: "401", contentLength: body.utf8.count, additionalHeaders: authenticationHeader)
+    public func handleRoute(request: Request) -> RouteData {
+        var body = "" 
+        var responseLineData = packResponseLine(request: request, statusCode: "401", body: body) 
         let filePath = NSURL.fileURL(withPathComponents: ["requestLog.txt"])
         if (request.headers.keys.contains("Authorization")) {
             if (checkAuthorization(authorization: request.headers["Authorization"]!)) {
                 body = readLogRequest(path: filePath!)
-                header = buildHeader(statusCode: "200 OK", contentLength: body.utf8.count)
+                responseLineData = packResponseLine(request: request, statusCode: "200", body: body) 
             }
-        }
-        return header + body
+        } 
+        let headersData = packResponseHeaders(body: body)
+        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
     }
 
-    private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
-            return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
-        }
+    private func packResponseLine(request: Request, statusCode: String, body: String) -> [String: String] {
+        var responseLineData: [String: String] = [:]
+        responseLineData["httpVersion"] = request.httpVersion
+        responseLineData["statusCode"] = statusCode 
+        responseLineData["statusMessage"] = body
+        return responseLineData
+    }
+
+    private func packResponseHeaders(body: String) -> [String: String] {
+        var headersData: [String: String] = [:]
+        headersData["Content-Length"] = String(body.utf8.count) 
+        headersData["Content-Type"] = "text/html"
+        headersData["Allow"] = "GET" 
+        headersData["WWW-Authenticate"] = authentication
+        return headersData
+    }
 
     private func readLogRequest(path: URL) -> String {
         var logData: String = String()

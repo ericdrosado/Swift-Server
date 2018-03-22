@@ -5,19 +5,36 @@ public class Hello: Route {
     
     public init() {}
 
-    public func handleRoute(request: Request) -> String {
+    public func handleRoute(request: Request) -> RouteData {
         let defaultText = "World"
-        let body = prepareBody(body: "Hello \(buildHelloBody(request: request) ?? defaultText)", method: request.method)
-        let header = buildHeader(statusCode: "200 OK", contentLength: body.utf8.count)
-        return header + body
+        let body = prepareBody(method: request.method, body: "Hello \(buildHelloBody(request: request) ?? defaultText)")
+        let responseLineData = packResponseLine(request: request) 
+        let headersData = packResponseHeaders(body: body, request: request)
+        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
     }
 
-    private func prepareBody(body: String, method: String) -> String {
-        if (method == "HEAD") {
-            return ""    
+    private func prepareBody(method: String, body: String) -> String {
+        if (method == "HEAD" || method == "OPTIONS") {
+            return "" 
         } else {
-            return "<!DOCTYPE html><html><body><h1>\(body)</h1></body></html>"
+            return body
         }
+    }
+
+    private func packResponseLine(request: Request) -> [String: String] {
+        var responseLineData: [String: String] = [:]
+        responseLineData["httpVersion"] = request.httpVersion
+        responseLineData["statusCode"] = "200"
+        responseLineData["statusMessage"] = "OK"
+        return responseLineData
+    }
+
+    private func packResponseHeaders(body: String, request: Request) -> [String: String] {
+        var headersData: [String: String] = [:]
+        headersData["Content-Length"] = String(body.utf8.count) 
+        headersData["Content-Type"] = "text/html"
+        headersData["Allow"] = "GET, HEAD, OPTIONS" 
+        return headersData
     }
 
     private func buildHelloBody(request: Request) -> String? {
@@ -39,7 +56,4 @@ public class Hello: Route {
         return queryString
     }
 
-    private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
-        return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
-    }
 }

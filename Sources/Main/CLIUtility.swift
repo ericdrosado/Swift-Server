@@ -29,9 +29,9 @@ public class CLIUtility {
 
     public func getDefaultDirectory() -> String? {
         if (!FileManager.default.fileExists(atPath: defaultDirectory)) {
-           return defaultDirectory 
+           return nil 
         } else {
-            return nil
+            return defaultDirectory
         }
     }
 

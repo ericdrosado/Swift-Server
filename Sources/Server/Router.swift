@@ -12,7 +12,7 @@ public class Router {
         self.fourOhFour = fourOhFour
     }
 
-    public func handleRoute(request: Request) -> String {
+    public func handleRoute(request: Request) -> RouteData {
         if (routes.keys.contains(request.path)) {
             return routes[request.path]!.handleRoute(request: request)
         } else {
