@@ -15,5 +15,6 @@ public class Routes {
                                                  "/form": Form(),
                                                  "/method_options": MethodOptions(),
                                                  "/method_options2": MethodOptions2(),
-                                                 "/logs": Logs()]
+                                                 "/logs": Logs(),
+                                                 "/file1": File1()]
 }
