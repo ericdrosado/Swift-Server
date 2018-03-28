@@ -24,14 +24,14 @@ public class CLIUtility {
     }
 
     public func getDirectory() -> String? {
-        return parsedArguments.get(directory) ?? getDefaultDirectory()
+        return verifyDirectoryExists(directory: String(describing: parsedArguments.get(directory)!)) ?? verifyDirectoryExists(directory: defaultDirectory)
     }
 
-    public func getDefaultDirectory() -> String? {
-        if (!FileManager.default.fileExists(atPath: defaultDirectory)) {
+    public func verifyDirectoryExists(directory: String) -> String? {
+        if (!FileManager.default.fileExists(atPath: directory)) {
            return nil 
         } else {
-            return defaultDirectory
+            return directory
         }
     }
 
