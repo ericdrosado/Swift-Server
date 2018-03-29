@@ -5,19 +5,31 @@ public class File1: Route {
 
         public init(){}
 
-        public func handleRoute(request: Request) -> String {
-            let body = readText(request: request) 
-            var header = buildHeader(statusCode: "200 OK", contentLength: body.utf8.count)
+        public func handleRoute(request: Request) -> RouteData {
+            var body = readText(request: request)
+            var responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK")
             if (request.method != "GET") {
-                header = buildHeader(statusCode: "405 Method Not Allowed", contentLength: body.utf8.count)
+                body = ""
+                responseLineData = packResponseLine(request: request, statusCode: "405", statusMessage: "Method Not Allowed")
             }
-            return header + body
-
+            let headersData = packResponseHeaders(body: body) 
+            return RouteData(responseLine: responseLineData, headers: headersData, body: body) 
         }
 
-        private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
-            return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
-                        
+        private func packResponseLine(request: Request, statusCode: String, statusMessage: String) -> [String: String] {
+            var responseLineData: [String: String] = [:]
+            responseLineData["httpVersion"] = request.httpVersion
+            responseLineData["statusCode"] = statusCode
+            responseLineData["statusMessage"] = statusMessage
+            return responseLineData
+        }
+
+        private func packResponseHeaders(body: String) -> [String: String] {
+            var headersData: [String: String] = [:]
+            headersData["Content-Length"] = String(body.utf8.count)
+            headersData["Content-Type"] = "text/html"
+            headersData["Allow"] = "GET"
+            return headersData
         }
             
         private func readText(request: Request) -> String {
