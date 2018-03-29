@@ -5,7 +5,30 @@ public class Form: Route {
 
     public init(){}
 
-    public func handleRoute(request: Request) -> String {
+    public func handleRoute(request: Request) -> RouteData{
+        manipulateTxt(request: request)
+        let body = "" 
+        let responseLineData = packResponseLine(request: request) 
+        let headersData = packResponseHeaders(body: body)
+        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
+    }
+
+    private func packResponseLine(request: Request) -> [String: String] {
+        var responseLineData: [String: String] = [:]
+        responseLineData["httpVersion"] = request.httpVersion
+        responseLineData["statusCode"] = "200"
+        responseLineData["statusMessage"] = "OK" 
+        return responseLineData
+    }
+
+    private func packResponseHeaders(body: String) -> [String: String] {
+        var headersData: [String: String] = [:]
+        headersData["Content-Length"] = String(body.utf8.count) 
+        headersData["Content-Type"] = "text/html"
+        headersData["Allow"] = "GET, HEAD, PUT, POST, OPTIONS" 
+        return headersData
+    }
+    public func manipulateTxt (request: Request) {
         let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
         if (request.method == "POST") {
             writeText(requestBody: request.body, path: filePath!)
@@ -14,9 +37,6 @@ public class Form: Route {
             let updatedData = getUpdatedText(data: rawLogData, bodyText: request.body) 
             writeText(requestBody: updatedData, path: filePath!)     
         }
-        let body = ""
-        let header = buildHeader(statusCode: "200 OK", contentLength: body.utf8.count)
-        return header + body
     }
 
     private func writeText(requestBody: [String: String], path: URL) {
@@ -54,7 +74,4 @@ public class Form: Route {
         return logData
     }
 
-    private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
-        return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
-    }
 }

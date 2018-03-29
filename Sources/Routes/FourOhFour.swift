@@ -5,22 +5,36 @@ public class FourOhFour {
 
     public init(){}
 
-    public func handleRoute(request: Request) -> String {
-        let body = prepareBody(body: "404 Page Not Found", method: request.method) 
-        let header = buildHeader(statusCode: "404 Not Found", contentLength: body.utf8.count) 
-        return header + body
+    public func handleRoute(request: Request) -> RouteData {
+        let body = prepareBody(method: request.method)
+        let responseLineData = packResponseLine(request: request)
+        let headersData = packResponseHeaders(body: body)
+        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
     }
     
-    private func prepareBody(body: String, method: String) -> String {
-        if (method == "HEAD") {
+    private func prepareBody(method: String) -> String {
+        if (method == "HEAD" || method == "OPTIONS") {
             return ""    
         } else {
-            return "<!DOCTYPE html><html><body><h1>\(body)</h1></body></html>"
+            return "Not Found"
         }
     }
+
+    private func packResponseLine(request: Request) -> [String: String] {
+        var responseLineData: [String: String] = [:]
+        responseLineData["httpVersion"] = request.httpVersion
+        responseLineData["statusCode"] = "404"
+        responseLineData["statusMessage"] = "Not Found" 
+        return responseLineData
+        
+    }
     
-    private func buildHeader(statusCode: String, contentLength: Int, additionalHeaders: String = "") -> String {
-        return "HTTP/1.1 \(statusCode)\r\n\(additionalHeaders)Content-Length: \(contentLength)\r\nContent-type: text/html\r\n\r\n" 
+    private func packResponseHeaders(body: String) -> [String: String] {
+        var headersData: [String: String] = [:]
+        headersData["Content-Length"] = String(body.utf8.count) 
+        headersData["Content-Type"] = "text/html"
+        headersData["Allow"] = "GET, HEAD, OPTIONS" 
+        return headersData
     }
 
 }

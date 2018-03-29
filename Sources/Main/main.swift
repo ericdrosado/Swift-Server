@@ -20,11 +20,11 @@ let routes = Routes.routes
 let fourOhFour = FourOhFour()
 let router = Router(routes: routes, fourOhFour: fourOhFour)
 
-let response = Response(router: router)
+let responder = Responder()
 
 if (directory == nil) {
     print("Error: No Public Directory Found")
 } else {
-    let server = Server(parser: Parser(directory: directory!), port: port, response: response, router: router)
+    let server = Server(parser: Parser(directory: directory!), port: port, responder: responder, router: router)
     try server.startServer()
 }

@@ -6,13 +6,13 @@ public class Server {
     private let acceptNewConnection = true
     private let parser: Parser
     private let port: Int
-    let response: Response
+    let responder: Responder
     let router: Router
 
-    public init(parser: Parser, port: Int, response: Response, router: Router) {
+    public init(parser: Parser, port: Int, responder: Responder, router: Router) {
         self.parser = parser
         self.port = port
-        self.response = response  
+        self.responder = responder  
         self.router = router
     }
 
@@ -24,7 +24,8 @@ public class Server {
                 let connectedSocket = try socket.acceptClientConnection()
                 let request = try connectedSocket.readString()! 
                 let parsedRequest = parser.parseRequest(request: request)
-                let requestResponse = response.buildResponse(request: parsedRequest)
+                let routeData = router.handleRoute(request: parsedRequest)
+                let requestResponse = responder.buildResponse(routeData: routeData)
                 try connectedSocket.write(from: requestResponse)
                 connectedSocket.close()
             } catch {

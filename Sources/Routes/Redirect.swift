@@ -5,17 +5,28 @@ public class Redirect: Route {
 
     public init(){}
 
-    public func handleRoute(request: Request) -> String {
-        let body = prepareBody(body: "Hello World", method: request.method)
-        let header = "HTTP/1.1 302\r\nContent-Length: \(body.utf8.count)\r\nContent-type: text/html\r\nLocation: /\r\n\r\n" 
-        return header + body
+    public func handleRoute(request: Request) -> RouteData{
+        let body = "" 
+        let responseLineData = packResponseLine(request: request, body: body) 
+        let headersData = packResponseHeaders(body: body)
+        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
     }
 
-    private func prepareBody(body: String, method: String) -> String {
-        if (method == "HEAD") {
-            return ""    
-        } else {
-            return "<!DOCTYPE html><html><body><h1>\(body)</h1></body></html>"
-        }
+    private func packResponseLine(request: Request, body: String) -> [String: String] {
+        var responseLineData: [String: String] = [:]
+        responseLineData["httpVersion"] = request.httpVersion
+        responseLineData["statusCode"] = "302"
+        responseLineData["statusMessage"] = "Found" 
+        return responseLineData
     }
+
+    private func packResponseHeaders(body: String) -> [String: String] {
+        var headersData: [String: String] = [:]
+        headersData["Content-Length"] = String(body.utf8.count) 
+        headersData["Content-Type"] = "text/html"
+        headersData["Allow"] = "GET, HEAD, OPTIONS" 
+        headersData["Location"] = "/"
+        return headersData
+    }
+
 }
