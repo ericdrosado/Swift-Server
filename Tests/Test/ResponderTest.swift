@@ -146,7 +146,9 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillDecodeOperators() {
         let request = buildRequest(method: "GET", route: "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
+
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
 
