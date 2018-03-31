@@ -212,7 +212,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute() {
         let request = buildRequest(method: "OPTIONS", route: "/method_options")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,POST,OPTIONS,PUT")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,POST,OPTIONS,PUT")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -222,7 +223,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute2() {
         let request = buildRequest(method: "OPTIONS", route: "/method_options2")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,OPTIONS,HEAD")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,OPTIONS,HEAD")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
