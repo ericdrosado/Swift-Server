@@ -87,7 +87,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnGETResponseWithQuery() {
         let request = buildRequest(method: "GET", route: "/hello?fname=\(queries[0])")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0])")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0])")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -97,7 +98,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnGETResponseWith2Queries() {
         let request = buildRequest(method: "GET", route: "/hello?mname=\(queries[0])&lname=\(queries[1])")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1])")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1])")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -107,7 +109,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnGETResponseWith3Queries() {
         let request = buildRequest(method: "GET", route: "/hello?fname=\(queries[0])&lname=\(queries[2])&mname=\(queries[1])")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1]) \(queries[2])")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1]) \(queries[2])")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -118,11 +121,12 @@ class ResponderTest: XCTestCase {
     func testBuildResponseWillReturnProperGETResponseWithQueryAfterAnInitialRequest() {
         let request1 = buildRequest(method: "GET", route: "/hello?fname=Person")
         let request2 = buildRequest(method: "GET", route: "/hello") 
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello World")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello World")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest1 = parser.parseRequest(request: request1)
         let routeData = router.handleRoute(request: parsedRequest1)
-        let _: String = responder.buildResponse(routeData: routeData)
+        let _: Data = responder.buildResponse(routeData: routeData)
         let parsedRequest2 = parser.parseRequest(request: request2)
         let routeData2 = router.handleRoute(request: parsedRequest2)
 
