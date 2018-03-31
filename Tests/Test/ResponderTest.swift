@@ -65,7 +65,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturn404ResponseWithGET() {
         let request = buildRequest(method: "GET", route: "/fooBar")
-        let expectedResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Not Found")        
+        let stringResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Not Found")        
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -75,7 +76,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturn404ResponseWithHEAD() {
         let request = buildRequest(method: "HEAD", route: "/foobar")
-        let expectedResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS") 
+        let stringResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS") 
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
