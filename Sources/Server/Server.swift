@@ -25,7 +25,7 @@ public class Server {
                 let request = try connectedSocket.readString()! 
                 let parsedRequest = parser.parseRequest(request: request)
                 let routeData = router.handleRoute(request: parsedRequest)
-                let requestResponse: Data = responder.buildResponse(routeData: routeData)
+                let requestResponse = responder.buildResponse(routeData: routeData)
                 try connectedSocket.write(from: requestResponse)
                 connectedSocket.close()
             } catch {

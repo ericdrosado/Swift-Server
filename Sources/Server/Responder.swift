@@ -6,12 +6,6 @@ public class Responder {
 
     public init(){}
 
-    public func buildResponse(routeData: RouteData) -> String {
-        let responseLine = buildResponseLine(routeData: routeData)
-        let headers = arrangeResponseHeaders(routeData: routeData)
-        return responseLine + headers + "\r\n\(routeData.body)"
-    }
-
     public func buildResponse(routeData: RouteData) -> Data {
         let responseLine = buildResponseLine(routeData: routeData)
         let headers = arrangeResponseHeaders(routeData: routeData)
