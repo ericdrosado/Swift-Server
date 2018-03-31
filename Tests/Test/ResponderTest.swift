@@ -135,7 +135,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturn418Response() {
         let request = buildRequest(method: "GET", route: "/coffee")
-        let expectedResponse = buildResponse(statusCode: "418 I'm a teapot", additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "I'm a teapot")
+        let stringResponse = buildResponse(statusCode: "418 I'm a teapot", additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "I'm a teapot")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
