@@ -21,6 +21,11 @@ class ResponderTest: XCTestCase {
         return "HTTP/1.1 \(statusCode)\r\nContent-Type: text/html\r\nContent-Length: \(body.utf8.count)\r\n\(additionalHeaders)\r\n\r\n\(body)" 
     }
 
+    private func convertResponseToBytes(response: String) -> Data {
+        let buffer = Data(response.utf8)
+        return buffer     
+    }
+
     private func createTempFile() {
         let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
         let path: String = filePath!.path
@@ -49,7 +54,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnHEADResponse() {
         let request = buildRequest(method: "HEAD", route: "/")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
