@@ -27,7 +27,7 @@ public class TextFile: Route {
         private func packResponseHeaders(body: String) -> [String: String] {
             var headersData: [String: String] = [:]
             headersData["Content-Length"] = String(body.utf8.count)
-            headersData["Content-Type"] = "text/html"
+            headersData["Content-Type"] = "text/plain"
             headersData["Allow"] = "GET"
             return headersData
         }

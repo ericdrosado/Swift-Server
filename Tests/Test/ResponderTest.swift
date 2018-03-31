@@ -114,7 +114,7 @@ class ResponderTest: XCTestCase {
 
         let parsedRequest1 = parser.parseRequest(request: request1)
         let routeData = router.handleRoute(request: parsedRequest1)
-        _ = responder.buildResponse(routeData: routeData)
+        let _: String = responder.buildResponse(routeData: routeData)
         let parsedRequest2 = parser.parseRequest(request: request2)
         let routeData2 = router.handleRoute(request: parsedRequest2)
 
@@ -167,7 +167,7 @@ class ResponderTest: XCTestCase {
 
         let parsedRequest = parser.parseRequest(request: request) 
         let routeData = router.handleRoute(request: parsedRequest)
-        let _ = responder.buildResponse(routeData: routeData)
+        let _: String = responder.buildResponse(routeData: routeData)
         let dataFromFile = readText() 
 
         XCTAssertEqual("My=Data", dataFromFile)
@@ -180,12 +180,12 @@ class ResponderTest: XCTestCase {
         let request1 = buildRequest(method: "POST", route: "/form", body: "My=Foo")
         let parsedRequest1 = parser.parseRequest(request: request1) 
         let routeData = router.handleRoute(request: parsedRequest1)
-        let _ = responder.buildResponse(routeData: routeData)
+        let _: String = responder.buildResponse(routeData: routeData)
 
         let request2 = buildRequest(method: "PUT", route: "/form", body: "My=Bar")
         let parsedRequest2 = parser.parseRequest(request: request2) 
         let routeData2 = router.handleRoute(request: parsedRequest2)
-        let _ = responder.buildResponse(routeData: routeData2)
+        let _: String = responder.buildResponse(routeData: routeData2)
         
         let dataFromFile = readText()
 

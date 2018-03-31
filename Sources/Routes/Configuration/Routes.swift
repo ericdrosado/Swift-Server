@@ -17,5 +17,8 @@ public class Routes {
                                                  "/method_options2": MethodOptions2(),
                                                  "/logs": Logs(),
                                                  "/file1": File1(),
-                                                 "/text-file.txt": TextFile()]
+                                                 "/text-file.txt": TextFile(),
+                                                 "/image.jpeg": ImageJPEG(),
+                                                 "/image.png": ImagePNG(),
+                                                 "/image.gif": ImageGIF()]
 }
