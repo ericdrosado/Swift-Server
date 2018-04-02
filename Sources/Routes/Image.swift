@@ -2,24 +2,32 @@ import Foundation
 import Request
 
 public class Image: Route {
+
+    let fourOhFour: FourOhFour
     
-    public init() {}
+    public init() {
+        self.fourOhFour = FourOhFour()
+    }
 
     public func handleRoute(request: Request) -> RouteData {
         let body = "" 
         let image = getImage(request: request) 
+        if (image == nil) {
+            return fourOhFour.handleRoute(request: request)
+        }
         let responseLineData = packResponseLine(request: request) 
         let headersData = packResponseHeaders(body: body, request: request)
         return RouteData(responseLine: responseLineData, headers: headersData, body: body, image: image)
     }
     
-    private func getImage(request: Request) -> Data {
+    private func getImage(request: Request) -> Data? {
         let filePath = NSURL.fileURL(withPathComponents: ["\(request.directory)\(request.path)"])
-        var imageData = Data()
+        var imageData: Data? = Data()
         do {
             imageData = try Data(contentsOf: filePath!)
         } catch {
-            print("Cannot convert .gif image.")
+            print("Cannot find image.")
+            imageData = nil
         }
         return imageData
     }
