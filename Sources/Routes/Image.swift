@@ -1,7 +1,7 @@
 import Foundation
 import Request
 
-public class ImageJPEG: Route {
+public class Image: Route {
     
     public init() {}
 
@@ -14,12 +14,12 @@ public class ImageJPEG: Route {
     }
     
     private func getImage(request: Request) -> Data {
-        let filePath = NSURL.fileURL(withPathComponents: ["\(request.directory)/image.jpeg"])
+        let filePath = NSURL.fileURL(withPathComponents: ["\(request.directory)\(request.path)"])
         var imageData = Data()
         do {
             imageData = try Data(contentsOf: filePath!)
         } catch {
-            print("Cannot convert .jpeg image.")
+            print("Cannot convert .gif image.")
         }
         return imageData
     }
@@ -34,9 +34,13 @@ public class ImageJPEG: Route {
 
     private func packResponseHeaders(body: String, request: Request) -> [String: String] {
         var headersData: [String: String] = [:]
-        headersData["Content-Type"] = "image/jpeg"
+        headersData["Content-Type"] = getContentType(request: request)
         headersData["Allow"] = "GET" 
         return headersData
+    }
+    
+    private func getContentType(request: Request) -> String {
+        return request.path.replacingOccurrences(of: "/", with: "").replacingOccurrences(of: ".", with: "/")
     }
 
 }
