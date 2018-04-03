@@ -26,7 +26,6 @@ public class Image: Route {
         do {
             imageData = try Data(contentsOf: filePath!)
         } catch {
-            print("Cannot find image.")
             imageData = nil
         }
         return imageData
