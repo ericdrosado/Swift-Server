@@ -12,18 +12,18 @@ class ImageTest: XCTestCase {
         return "\(method) \(route) HTTP/1.1\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
     }
 
-    private func createTempFile(imageFile: String) {
+    private func manageTempFile(imageFile: String) {
         let filePath = NSURL.fileURL(withPathComponents: [imageFile])
         let path: String = filePath!.path
         FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
-    }
 
-    private func removeTempFile(imageFile: String) {
-        do {
-            let filePath = NSURL.fileURL(withPathComponents: [imageFile])
-            try FileManager.default.removeItem(at: filePath!) 
-        } catch {
-            print("Error temp file was not deleted. \(error)")
+        addTeardownBlock {
+            do {
+                let filePath = NSURL.fileURL(withPathComponents: [imageFile])
+                try FileManager.default.removeItem(at: filePath!) 
+            } catch {
+                XCTFail("Error while deleting temporary file at \(path): \(error)")
+            }
         }
     }
 
@@ -79,7 +79,7 @@ class ImageTest: XCTestCase {
     }
 
     func testHandleRouteWillReturnExpectedRouteDataForJPEGImage() {
-        createTempFile(imageFile: "image.jpeg") 
+        manageTempFile(imageFile: "image.jpeg") 
         let request = buildRequest(method: "GET", route: "/image.jpeg")
         let parsedRequest = currentDirectoryParser.parseRequest(request: request) 
         let routeData = image.handleRoute(request: parsedRequest)
@@ -87,11 +87,10 @@ class ImageTest: XCTestCase {
         let expectedRouteData = buildRouteData(imageFile: "image.jpeg") 
 
         XCTAssertTrue(expectedRouteData == routeData)
-        removeTempFile(imageFile: "image.jpeg")
     }
 
     func testHandleRouteWillReturnExpectedRouteDataForGIFImage() {
-        createTempFile(imageFile: "image.gif") 
+        manageTempFile(imageFile: "image.gif") 
         let request = buildRequest(method: "GET", route: "/image.gif")
         let parsedRequest = currentDirectoryParser.parseRequest(request: request) 
         let routeData = image.handleRoute(request: parsedRequest)
@@ -99,11 +98,10 @@ class ImageTest: XCTestCase {
         let expectedRouteData = buildRouteData(imageFile: "image.gif") 
 
         XCTAssertTrue(expectedRouteData == routeData)
-        removeTempFile(imageFile: "image.gif")
     }
 
     func testHandleRouteWillReturnExpectedRouteDataForPNGImage() {
-        createTempFile(imageFile: "image.png") 
+        manageTempFile(imageFile: "image.png") 
         let request = buildRequest(method: "GET", route: "/image.png")
         let parsedRequest = currentDirectoryParser.parseRequest(request: request) 
         let routeData = image.handleRoute(request: parsedRequest)
@@ -111,7 +109,6 @@ class ImageTest: XCTestCase {
         let expectedRouteData = buildRouteData(imageFile: "image.png") 
 
         XCTAssertTrue(expectedRouteData == routeData)
-        removeTempFile(imageFile: "image.png")
     }
 }
 
