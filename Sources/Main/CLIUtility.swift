@@ -24,7 +24,11 @@ public class CLIUtility {
     }
 
     public func getDirectory() -> String? {
-        return verifyDirectoryExists(directory: String(describing: parsedArguments.get(directory)!)) ?? verifyDirectoryExists(directory: defaultDirectory)
+        if (parsedArguments.get(directory) != nil) {
+            return verifyDirectoryExists(directory: String(describing: parsedArguments.get(directory)!))
+        } else {
+            return verifyDirectoryExists(directory: defaultDirectory)
+        }
     }
 
     public func verifyDirectoryExists(directory: String) -> String? {

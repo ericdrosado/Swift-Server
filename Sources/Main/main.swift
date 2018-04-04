@@ -21,7 +21,6 @@ let fourOhFour = FourOhFour()
 let router = Router(routes: routes, fourOhFour: fourOhFour)
 
 let responder = Responder()
-
 if (directory == nil) {
     print("Error: No Public Directory Found")
 } else {

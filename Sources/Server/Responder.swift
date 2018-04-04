@@ -6,10 +6,19 @@ public class Responder {
 
     public init(){}
 
-    public func buildResponse(routeData: RouteData) -> String {
+    public func buildResponse(routeData: RouteData) -> Data {
         let responseLine = buildResponseLine(routeData: routeData)
         let headers = arrangeResponseHeaders(routeData: routeData)
-        return responseLine + headers + "\r\n\(routeData.body)"
+        let response = responseLine + headers + "\r\n\(routeData.body)"
+        return convertResponseToBytes(response: response, routeData: routeData)
+    }
+
+    private func convertResponseToBytes(response: String, routeData: RouteData) -> Data {
+        var buffer = Data(response.utf8)
+        if (routeData.image != nil) {
+            buffer += routeData.image!
+        }
+        return buffer     
     }
 
     private func buildResponseLine(routeData: RouteData) -> String {
