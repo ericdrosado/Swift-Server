@@ -8,7 +8,7 @@ public class Server {
     private let port: Int
     let responder: Responder
     let router: Router
-
+    
     public init(parser: Parser, port: Int, responder: Responder, router: Router) {
         self.parser = parser
         self.port = port

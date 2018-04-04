@@ -21,6 +21,11 @@ class ResponderTest: XCTestCase {
         return "HTTP/1.1 \(statusCode)\r\nContent-Type: text/html\r\nContent-Length: \(body.utf8.count)\r\n\(additionalHeaders)\r\n\r\n\(body)" 
     }
 
+    private func convertResponseToBytes(response: String) -> Data {
+        let buffer = Data(response.utf8)
+        return buffer     
+    }
+
     private func createTempFile() {
         let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
         let path: String = filePath!.path
@@ -49,7 +54,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnHEADResponse() {
         let request = buildRequest(method: "HEAD", route: "/")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -59,7 +65,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturn404ResponseWithGET() {
         let request = buildRequest(method: "GET", route: "/fooBar")
-        let expectedResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Not Found")        
+        let stringResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Not Found")        
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -69,7 +76,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturn404ResponseWithHEAD() {
         let request = buildRequest(method: "HEAD", route: "/foobar")
-        let expectedResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS") 
+        let stringResponse = buildResponse(statusCode: status404, additionalHeaders: "Allow: GET, HEAD, OPTIONS") 
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -79,7 +87,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnGETResponseWithQuery() {
         let request = buildRequest(method: "GET", route: "/hello?fname=\(queries[0])")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0])")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0])")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -89,7 +98,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnGETResponseWith2Queries() {
         let request = buildRequest(method: "GET", route: "/hello?mname=\(queries[0])&lname=\(queries[1])")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1])")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1])")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -99,7 +109,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnGETResponseWith3Queries() {
         let request = buildRequest(method: "GET", route: "/hello?fname=\(queries[0])&lname=\(queries[2])&mname=\(queries[1])")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1]) \(queries[2])")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello \(queries[0]) \(queries[1]) \(queries[2])")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -110,11 +121,12 @@ class ResponderTest: XCTestCase {
     func testBuildResponseWillReturnProperGETResponseWithQueryAfterAnInitialRequest() {
         let request1 = buildRequest(method: "GET", route: "/hello?fname=Person")
         let request2 = buildRequest(method: "GET", route: "/hello") 
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello World")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "Hello World")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest1 = parser.parseRequest(request: request1)
         let routeData = router.handleRoute(request: parsedRequest1)
-        _ = responder.buildResponse(routeData: routeData)
+        let _: Data = responder.buildResponse(routeData: routeData)
         let parsedRequest2 = parser.parseRequest(request: request2)
         let routeData2 = router.handleRoute(request: parsedRequest2)
 
@@ -123,7 +135,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturn418Response() {
         let request = buildRequest(method: "GET", route: "/coffee")
-        let expectedResponse = buildResponse(statusCode: "418 I'm a teapot", additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "I'm a teapot")
+        let stringResponse = buildResponse(statusCode: "418 I'm a teapot", additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "I'm a teapot")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -133,7 +146,9 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillDecodeOperators() {
         let request = buildRequest(method: "GET", route: "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS", body: "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
+
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
 
@@ -142,7 +157,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnPOSTResponse() {
         let request = buildRequest(method: "POST", route: "/form", body: "My=Data")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, PUT, POST, OPTIONS")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, PUT, POST, OPTIONS")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -152,7 +168,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnPUTResponse() {
         let request = buildRequest(method: "PUT", route: "/form", body: "My=Data")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, PUT, POST, OPTIONS")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, PUT, POST, OPTIONS")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -167,7 +184,7 @@ class ResponderTest: XCTestCase {
 
         let parsedRequest = parser.parseRequest(request: request) 
         let routeData = router.handleRoute(request: parsedRequest)
-        let _ = responder.buildResponse(routeData: routeData)
+        let _: Data = responder.buildResponse(routeData: routeData)
         let dataFromFile = readText() 
 
         XCTAssertEqual("My=Data", dataFromFile)
@@ -180,12 +197,12 @@ class ResponderTest: XCTestCase {
         let request1 = buildRequest(method: "POST", route: "/form", body: "My=Foo")
         let parsedRequest1 = parser.parseRequest(request: request1) 
         let routeData = router.handleRoute(request: parsedRequest1)
-        let _ = responder.buildResponse(routeData: routeData)
+        let _: Data = responder.buildResponse(routeData: routeData)
 
         let request2 = buildRequest(method: "PUT", route: "/form", body: "My=Bar")
         let parsedRequest2 = parser.parseRequest(request: request2) 
         let routeData2 = router.handleRoute(request: parsedRequest2)
-        let _ = responder.buildResponse(routeData: routeData2)
+        let _: Data = responder.buildResponse(routeData: routeData2)
         
         let dataFromFile = readText()
 
@@ -195,7 +212,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute() {
         let request = buildRequest(method: "OPTIONS", route: "/method_options")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,POST,OPTIONS,PUT")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,HEAD,POST,OPTIONS,PUT")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
@@ -205,7 +223,8 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnOptionsResponseForMethodOptionsRoute2() {
         let request = buildRequest(method: "OPTIONS", route: "/method_options2")
-        let expectedResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,OPTIONS,HEAD")
+        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET,OPTIONS,HEAD")
+        let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
         let routeData = router.handleRoute(request: parsedRequest)
