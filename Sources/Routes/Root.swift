@@ -18,11 +18,9 @@ public class Root: Route {
     }
 
     private func getDirectoryListingData(request: Request) -> RouteData {
-        var body: String = ""
-        if let files = getFilesFromDirectory(directory: request.directory) {
-            let htmlBody = buildHTMLBody(files: files)
-            body = prepareBody(body: htmlBody, method: request.method)
-        } 
+        let files = getFilesFromDirectory(directory: request.directory) 
+        let htmlBody = buildHTMLBody(files: files)
+        let body = prepareBody(body: htmlBody, method: request.method)
         let responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK") 
         let headersData = packResponseHeaders(body: body)
         return RouteData(responseLine: responseLineData, headers: headersData, body: body)
@@ -36,12 +34,12 @@ public class Root: Route {
         return RouteData(responseLine: responseLineData, headers: headersData, body: body)
     }
 
-    private func getFilesFromDirectory(directory: String) -> [String]? {
-        var files: [String]? = [] 
+    private func getFilesFromDirectory(directory: String) -> [String] {
+        var files: [String] = [] 
         do {
             files = try FileManager.default.contentsOfDirectory(atPath: directory)
         } catch {
-            files = nil
+            files = [] 
         }
         return files 
     }
