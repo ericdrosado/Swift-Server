@@ -20,15 +20,15 @@ public class Image: Route {
         return RouteData(responseLine: responseLineData, headers: headersData, body: body, image: image)
     }
     
-    private func getImage(request: Request) -> Data? {
-        let filePath = NSURL.fileURL(withPathComponents: ["\(request.directory)\(request.path)"])
-        var imageData: Data? = Data()
-        do {
-            imageData = try Data(contentsOf: filePath!)
-        } catch {
-            imageData = nil
+    private func getImage(request: Request) -> [UInt8]? {
+        let filePath = "\(request.directory)\(request.path)"
+        if let data = NSData(contentsOfFile: filePath) {
+            var buffer = [UInt8](repeating: 0, count: data.length)
+            data.getBytes(&buffer, length: data.length)
+            return buffer 
+        } else {
+            return nil
         }
-        return imageData
     }
 
     private func packResponseLine(request: Request) -> [String: String] {

@@ -35,15 +35,14 @@ class ImageTest: XCTestCase {
                          image: getImage(path: "./\(imageFile)"))
     }
     
-    private func getImage(path: String) -> Data? {
-        let filePath = NSURL.fileURL(withPathComponents: [path])
-        var imageData: Data? = Data()
-        do {
-            imageData = try Data(contentsOf: filePath!)
-        } catch {
-            imageData = nil
+    private func getImage(path: String) -> [UInt8] {
+        var imageData = [UInt8]()
+        if let data = NSData(contentsOfFile: path) {
+            var buffer = [UInt8](repeating: 0, count: data.length)
+            data.getBytes(&buffer, length: data.length)
+            imageData = buffer
         }
-        return imageData
+        return imageData 
     }
 
     func testHandleRouteWillReturnRouteData404ResponseIfImageFileDoesNotExist() {
@@ -118,7 +117,7 @@ extension RouteData: Equatable {
             lhs.responseLine == rhs.responseLine &&
             lhs.headers == rhs.headers &&
             lhs.body == rhs.body &&
-            lhs.image == rhs.image
+            lhs.image! == rhs.image!
     }
 }
 

@@ -25,5 +25,6 @@ if (directory == nil) {
     print("Error: No Public Directory Found")
 } else {
     let server = Server(parser: Parser(directory: directory!), port: port, responder: responder, router: router)
+    print("Your server is running on port: \(port) with the following directory: \(directory!)")
     try server.startServer()
 }
