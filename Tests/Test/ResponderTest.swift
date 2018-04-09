@@ -21,6 +21,10 @@ class ResponderTest: XCTestCase {
         return "HTTP/1.1 \(statusCode)\r\nContent-Type: text/html\r\nContent-Length: \(body.utf8.count)\r\n\(additionalHeaders)\r\n\r\n\(body)" 
     }
 
+    private func buildResponseWithCharset(statusCode: String, additionalHeaders: String = "", body: String = "") -> String {
+        return "HTTP/1.1 \(statusCode)\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: \(body.utf8.count)\r\n\(additionalHeaders)\r\n\r\n\(body)" 
+    }
+
     private func convertResponseToBytes(response: String) -> Data {
         let buffer = Data(response.utf8)
         return buffer     
@@ -54,7 +58,7 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnHEADResponse() {
         let request = buildRequest(method: "HEAD", route: "/")
-        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS")
+        let stringResponse = buildResponseWithCharset(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS")
         let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
