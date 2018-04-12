@@ -4,16 +4,20 @@ import Request
 public class CatForm: Route {
 
     let actions: [String: Action]
+    let catFormPath: String
+    let catFormDataPath: String
 
     public init() {
         self.actions = ["POST": Post()]
+        self.catFormPath = "/cat-form"
+        self.catFormDataPath = "/cat-form/data"
     }
 
     public func handleRoute(request: Request) -> RouteData {
         let filePath = "\(request.directory)\(request.path)"
-        if (request.method != "POST") {
+        if (request.method != "POST" && request.path == catFormDataPath) {
             return CatForm.Data().handleRoute(path: filePath, request: request)
-        } else if (request.method == "POST") {
+        } else if (request.method == "POST" && request.path == catFormPath) {
             return actions[request.method]!.handleRequest(request: request, path: filePath)
         } else {
             let body = ""
