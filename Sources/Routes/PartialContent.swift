@@ -7,51 +7,49 @@ public class PartialContent: Route {
 
     public func handleRoute(request: Request) -> RouteData {
         var body = readText(request: request)
-        var responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK")
-        var headersData = packResponseHeaders(body: body) 
-        let rangeValues = request.headers["Range"]!.components(separatedBy: CharacterSet.decimalDigits.inverted).filter {$0 != ""}
         let totalBytes = body.utf8.count
-        let totalBytesBaseZero = body.utf8.count - 1
-        var rangeStart = body.utf8.count - Int(rangeValues[0])!  
-        var startIndex = body.index(body.startIndex, offsetBy: rangeStart)
-        let endIndex = body.index(body.endIndex, offsetBy: 0)
-        var range = startIndex..<endIndex
+        let (rangeStart, rangeEnd) = setContentRange(range: request.headers["Range"]!, totalBytesBaseZero: totalBytes - 1)
         if (request.method != "GET") {
             body = ""
-            responseLineData = packResponseLine(request: request, statusCode: "405", statusMessage: "Method Not Allowed")
-            headersData = packResponseHeaders(body: body) 
-        } else if (request.headers["Range"]!.replacingOccurrences(of: " bytes=", with: "").hasPrefix("-")) {
-            let contentRange = "bytes \(rangeStart)-\(totalBytesBaseZero)/\(totalBytes)" 
-            body = String(body[range])
-            responseLineData = packResponseLine(request: request, statusCode: "206", statusMessage: "Partial Content")
-            headersData = packResponseHeaders(body: body, additionalHeaders: ["Content-Range": contentRange]) 
-        } else if (request.headers["Range"]!.replacingOccurrences(of: " bytes=", with: "").hasSuffix("-")) {
-            rangeStart = Int(rangeValues[0])!  
-            let contentRange = "bytes \(rangeStart)-\(totalBytesBaseZero)/\(totalBytes)" 
-            startIndex = body.index(body.startIndex, offsetBy: rangeStart)
-            range = startIndex..<endIndex
-            body = String(body[range])
-            responseLineData = packResponseLine(request: request, statusCode: "206", statusMessage: "Partial Content")
-            headersData = packResponseHeaders(body: body, additionalHeaders: ["Content-Range": contentRange]) 
+            let responseLineData = packResponseLine(request: request, statusCode: "405", statusMessage: "Method Not Allowed")
+            let headersData = packResponseHeaders(body: body)
+            return RouteData(responseLine: responseLineData, headers: headersData, body: body)
+        } else if (rangeEnd > totalBytes) {
+            body = ""
+            let contentRange = "bytes */\(totalBytes)" 
+            let responseLineData = packResponseLine(request: request, statusCode: "416", statusMessage: "Range Not Satisfiable")
+            let headersData = packResponseHeaders(body: body, additionalHeaders: ["Content-Range": contentRange]) 
+            return RouteData(responseLine: responseLineData, headers: headersData, body: body)
         } else {
-            let rangeStart = Int(rangeValues[0])  
-            let rangeEnd = Int(rangeValues[1])
-            var contentRange = "bytes \(rangeStart!)-\(rangeEnd!)/\(totalBytes)" 
-            if  (rangeEnd! > totalBytesBaseZero) {
-                body = ""
-                contentRange = "bytes */\(totalBytes)" 
-                responseLineData = packResponseLine(request: request, statusCode: "416", statusMessage: "Range Not Satisfiable")
-                headersData = packResponseHeaders(body: body, additionalHeaders: ["Content-Range": contentRange]) 
-                return RouteData(responseLine: responseLineData, headers: headersData, body: body) 
-            }
-            let startIndex = body.index(body.startIndex, offsetBy: rangeStart!)
-            let endIndex = body.index(body.endIndex, offsetBy: rangeEnd! - totalBytesBaseZero)
+            let totalBytesBaseZero = totalBytes - 1
+            let contentRange = "bytes \(rangeStart)-\(rangeEnd)/\(totalBytes)" 
+            let startIndex = body.index(body.startIndex, offsetBy: rangeStart)
+            let endIndex = body.index(body.endIndex, offsetBy: rangeEnd - totalBytesBaseZero)
             let range = startIndex..<endIndex
             body = String(body[range])
-            responseLineData = packResponseLine(request: request, statusCode: "206", statusMessage: "Partial Content")
-            headersData = packResponseHeaders(body: body, additionalHeaders: ["Content-Range": contentRange]) 
+            let responseLineData = packResponseLine(request: request, statusCode: "206", statusMessage: "Partial Content")
+            let headersData = packResponseHeaders(body: body, additionalHeaders: ["Content-Range": contentRange]) 
+            return RouteData(responseLine: responseLineData, headers: headersData, body: body)
         } 
-        return RouteData(responseLine: responseLineData, headers: headersData, body: body) 
+    }
+
+    private func setContentRange(range: String, totalBytesBaseZero: Int) -> (Int, Int) {
+        let rangeDesignation = range.replacingOccurrences(of: " bytes=", with: "") 
+        let rangeValues = range.components(separatedBy: CharacterSet.decimalDigits.inverted).filter {$0 != ""}
+        var rangeStart: Int
+        var rangeEnd: Int 
+        if (rangeDesignation.hasPrefix("-")) {
+            let totalBytes = totalBytesBaseZero + 1
+            rangeStart = totalBytes - Int(rangeValues[0])! 
+            rangeEnd = totalBytesBaseZero
+        } else if (rangeDesignation.hasSuffix("-")) {
+            rangeStart = Int(rangeValues[0])!
+            rangeEnd = totalBytesBaseZero
+        } else {
+            rangeStart = Int(rangeValues[0])!
+            rangeEnd = Int(rangeValues[1])!
+        }
+        return (rangeStart, rangeEnd)
     }
 
     private func packResponseLine(request: Request, statusCode: String, statusMessage: String) -> [String: String] {
