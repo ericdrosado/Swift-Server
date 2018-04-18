@@ -38,6 +38,16 @@ public class Parser {
 
     private func parseBody(rawBody: String) -> [String: String] {
         var bodyData: [String: String] = [:] 
+        if (rawBody.contains("=")) {
+            bodyData = parseBodyWithEqualitySign(rawBody: rawBody)
+        } else {
+            bodyData = ["body": rawBody]
+        }
+        return bodyData
+    }
+
+    private func parseBodyWithEqualitySign(rawBody: String) -> [String: String] {
+        var bodyData: [String: String] = [:] 
         let body = rawBody.replacingOccurrences(of: "\"", with: "")  
         let lineData = body.components(separatedBy: "\n")
         for data in lineData {
