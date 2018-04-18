@@ -36,7 +36,7 @@ git submodule update
 + In the root directory you can enter any of the following examples:
 ```
 ./.build/debug/main -p <port>                     //Default directory is ./public without -d
-.//build/debug/main -d <directoryPath>            //Default port is 5000 without -p
+./.build/debug/main -d <directoryPath>            //Default port is 5000 without -p
 ./.build/debug/main -p <port> -d <directoryPath>
 ```
 
