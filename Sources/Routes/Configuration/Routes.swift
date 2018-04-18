@@ -20,5 +20,7 @@ public class Routes {
                                                  "/text-file.txt": TextFile(),
                                                  "/image.jpeg": Image(),
                                                  "/image.png": Image(),
-                                                 "/image.gif": Image()]
+                                                 "/image.gif": Image(),
+                                                 "/cat-form": CatForm(),
+                                                 "/cat-form/data": CatForm()]
 }
