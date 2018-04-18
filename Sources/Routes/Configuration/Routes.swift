@@ -22,5 +22,6 @@ public class Routes {
                                                  "/image.png": Image(),
                                                  "/image.gif": Image(),
                                                  "/cat-form": CatForm(),
-                                                 "/cat-form/data": CatForm()]
+                                                 "/cat-form/data": CatForm(),
+                                                 "/partial_content.txt": PartialContent()]
 }

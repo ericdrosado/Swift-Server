@@ -117,6 +117,7 @@ extension RouteData: Equatable {
             lhs.responseLine == rhs.responseLine &&
             lhs.headers == rhs.headers &&
             lhs.body == rhs.body &&
+            lhs.image == nil && rhs.image == nil || 
             lhs.image! == rhs.image!
     }
 }
