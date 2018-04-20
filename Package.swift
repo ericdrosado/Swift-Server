@@ -16,10 +16,12 @@ let package = Package(
             name: "Request"),
         .target(
             name: "Routes",
-            dependencies: ["Request"]),
+            dependencies: ["Request", "ServerIO"]),
         .target(
             name: "Server",
             dependencies: ["Request","Routes","Socket"]),
+        .target(
+            name: "ServerIO"),
         .testTarget(
             name:"Test", 
             dependencies: ["Request", "Server"])

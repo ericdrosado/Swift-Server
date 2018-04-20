@@ -1,9 +1,14 @@
 import Foundation
 import Request
+import ServerIO
 
 public class Form: Route {
 
-    public init(){}
+    let fileIO: FileIO 
+
+    public init(fileIO: FileIO) {
+        self.fileIO = fileIO
+    }
 
     public func handleRoute(request: Request) -> RouteData{
         manipulateTxt(request: request)
@@ -29,34 +34,14 @@ public class Form: Route {
         return headersData
     }
     public func manipulateTxt (request: Request) {
-        let filePath = NSURL.fileURL(withPathComponents: ["data.txt"])
+        let filePath = "data.txt"
         if (request.method == "POST") {
-            writeText(requestBody: request.body, path: filePath!)
+            fileIO.writeText(requestBody: request.body, path: filePath)
         } else {
-            let rawLogData = readText(path: filePath!)
+            let rawLogData = fileIO.readText(path: filePath)
             let updatedData = getUpdatedText(data: rawLogData, bodyText: request.body) 
-            writeText(requestBody: updatedData, path: filePath!)     
+            fileIO.writeText(requestBody: updatedData, path: filePath)     
         }
-    }
-
-    private func writeText(requestBody: [String: String], path: URL) {
-        let text =  requestBody.map{ "\($0)=\($1)" }.joined(separator:"\n")
-        do {
-            try text.write(to: path, atomically: false,
-            encoding: String.Encoding.utf8)
-        } catch {
-            print("Error writing to data.txt. \(error)")
-        }
-    }
-
-    private func readText(path: URL) -> String {
-        var logData: String = String()
-            do {
-                logData = try String(contentsOf: path, encoding: String.Encoding.utf8) 
-            } catch {
-                print("Error reading text file. \(error)")
-            }
-        return logData
     }
 
     private func getUpdatedText(data: String, bodyText: [String: String]) -> [String: String] {
