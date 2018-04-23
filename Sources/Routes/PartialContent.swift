@@ -79,14 +79,4 @@ public class PartialContent: Route {
         return headersData
     }
 
-    //private func readText(request: Request) -> String {
-    //    let path = NSURL.fileURL(withPathComponents: ["\(request.directory)/partial_content.txt"])
-    //    var fileData: String = String()
-    //    do {
-    //        fileData = try String(contentsOf: path!, encoding: String.Encoding.utf8) 
-    //    } catch {
-    //        print("Error reading text file. \(error)")
-    //    }
-    //    return fileData
-    //}
 }

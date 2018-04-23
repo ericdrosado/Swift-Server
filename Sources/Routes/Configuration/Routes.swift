@@ -21,7 +21,7 @@ public class Routes {
                        "/method_options2": MethodOptions2(),
                        "/logs": Logs(documentIO: documentIO),
                        "/file1": File1(documentIO: documentIO),
-                       "/text-file.txt": TextFile(),
+                       "/text-file.txt": TextFile(documentIO: documentIO),
                        "/image.jpeg": Image(),
                        "/image.png": Image(),
                        "/image.gif": Image(),
