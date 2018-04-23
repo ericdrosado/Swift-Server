@@ -3,11 +3,13 @@ import Request
 
 public class Logs: Route {
 
+    let fileIO: FileIO 
     let userName: String
     let password: String
     let authentication: String
 
-    public init(){
+    public init(fileIO: FileIO){
+        self.fileIO = fileIO
         self.userName = "admin"
         self.password = "hunter2"
         self.authentication = "Basic realm= Access to logs"
@@ -16,10 +18,10 @@ public class Logs: Route {
     public func handleRoute(request: Request) -> RouteData {
         var body = "" 
         var responseLineData = packResponseLine(request: request, statusCode: "401", body: body) 
-        let filePath = NSURL.fileURL(withPathComponents: ["requestLog.txt"])
+        let filePath = "requestLog.txt"
         if (request.headers.keys.contains("Authorization")) {
             if (checkAuthorization(authorization: request.headers["Authorization"]!)) {
-                body = readLogRequest(path: filePath!)
+                body = fileIO.readText(path: filePath)
                 responseLineData = packResponseLine(request: request, statusCode: "200", body: body) 
             }
         } 
@@ -42,25 +44,6 @@ public class Logs: Route {
         headersData["Allow"] = "GET" 
         headersData["WWW-Authenticate"] = authentication
         return headersData
-    }
-
-    private func readLogRequest(path: URL) -> String {
-        var logData: String = String()
-        do {
-            logData = try String(contentsOf: path, encoding: String.Encoding.utf8) 
-        } catch {
-            print("Error reading requestLog.txt. \(error)")
-        }
-        return logData
-    }
-
-    private func clearLog(path: URL) {
-        let text = ""
-        do {
-            try text.write(to: path, atomically: false, encoding: String.Encoding.utf8)
-        } catch {
-            print("Error clearing requestLog.txt. \(error)")
-        }
     }
 
     private func checkAuthorization(authorization: String) -> Bool {

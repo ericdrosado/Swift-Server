@@ -19,7 +19,7 @@ public class Routes {
                        "/form": Form(fileIO: fileIO),
                        "/method_options": MethodOptions(),
                        "/method_options2": MethodOptions2(),
-                       "/logs": Logs(),
+                       "/logs": Logs(fileIO: fileIO),
                        "/file1": File1(fileIO: fileIO),
                        "/text-file.txt": TextFile(),
                        "/image.jpeg": Image(),
