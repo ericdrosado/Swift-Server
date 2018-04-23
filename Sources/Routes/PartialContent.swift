@@ -1,12 +1,18 @@
 import Foundation
 import Request
+import ServerIO
 
 public class PartialContent: Route {
 
-    public init(){}
+    let documentIO: DocumentIO
+
+    public init(documentIO: DocumentIO) {
+        self.documentIO = documentIO
+    }
 
     public func handleRoute(request: Request) -> RouteData {
-        var body = readText(request: request)
+        let path = "\(request.directory)/partial_content.txt"
+        var body = documentIO.readText(path: path)
         let totalBytes = body.utf8.count
         let (rangeStart, rangeEnd) = setContentRange(range: request.headers["Range"]!, totalBytesBaseZero: totalBytes - 1)
         if (request.method != "GET") {
@@ -73,14 +79,14 @@ public class PartialContent: Route {
         return headersData
     }
 
-    private func readText(request: Request) -> String {
-        let path = NSURL.fileURL(withPathComponents: ["\(request.directory)/partial_content.txt"])
-        var fileData: String = String()
-        do {
-            fileData = try String(contentsOf: path!, encoding: String.Encoding.utf8) 
-        } catch {
-            print("Error reading text file. \(error)")
-        }
-        return fileData
-    }
+    //private func readText(request: Request) -> String {
+    //    let path = NSURL.fileURL(withPathComponents: ["\(request.directory)/partial_content.txt"])
+    //    var fileData: String = String()
+    //    do {
+    //        fileData = try String(contentsOf: path!, encoding: String.Encoding.utf8) 
+    //    } catch {
+    //        print("Error reading text file. \(error)")
+    //    }
+    //    return fileData
+    //}
 }

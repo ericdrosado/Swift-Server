@@ -1,17 +1,18 @@
 import Foundation
 import Request
+import ServerIO
 
 public class File1: Route {
 
-    let fileIO: FileIO
+    let documentIO: DocumentIO
 
-    public init(fileIO: FileIO) {
-        self.fileIO = fileIO
+    public init(documentIO: DocumentIO) {
+        self.documentIO = documentIO
     }
 
     public func handleRoute(request: Request) -> RouteData {
         let path = "\(request.directory)/file1"
-        var body = fileIO.readText(path: path)
+        var body = documentIO.readText(path: path)
         var responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK")
         if (request.method != "GET") {
             body = ""

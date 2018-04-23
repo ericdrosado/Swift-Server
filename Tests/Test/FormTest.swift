@@ -5,7 +5,7 @@ import ServerIO
 
 class FormTest: XCTestCase {
 
-    let form = Form(fileIO: FileIO())
+    let form = Form(documentIO: DocumentIO())
     let parser = Parser(directory: "./cob_spec/public")
 
     private func buildRequest(method: String, route: String, body: String = "") -> String {

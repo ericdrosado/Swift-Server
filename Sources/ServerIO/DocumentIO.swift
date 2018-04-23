@@ -1,6 +1,7 @@
 import Foundation
+import Request
 
-public class FileIO {
+public class DocumentIO {
    
     public init(){}
 
@@ -24,6 +25,16 @@ public class FileIO {
             print("Error reading text file. \(error)")
         }
         return data
+    }
+
+    public func writePlainText(requestBody: String, path: String) {
+        let filePath = NSURL.fileURL(withPathComponents: [path])
+        let text = requestBody   
+        do {
+            try text.write(to: filePath!, atomically: false, encoding: String.Encoding.utf8)
+        } catch {
+            print("Error writing to file. \(error)") 
+        }
     }
 
 }

@@ -2,10 +2,11 @@ import XCTest
 import Routes
 import Request
 import Server
+import ServerIO
 
 class PatchContentTest: XCTestCase {
 
-    let patchContent = PatchContent()
+    let patchContent = PatchContent(documentIO: DocumentIO())
     let parser = Parser(directory: "./cob_spec/public")
 
     private func manageTempFile(file: String) {
@@ -16,11 +17,9 @@ class PatchContentTest: XCTestCase {
         addTeardownBlock {
             do {
                 let filePath = NSURL.fileURL(withPathComponents: [file])
-                    try FileManager.default.removeItem(at: filePath!) 
-
+                try FileManager.default.removeItem(at: filePath!) 
             } catch {
                 XCTFail("Error while deleting temporary file at \(path): \(error)")
-
             }
         }
     }

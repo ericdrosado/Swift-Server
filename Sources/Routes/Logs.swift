@@ -1,15 +1,16 @@
 import Foundation
 import Request
+import ServerIO
 
 public class Logs: Route {
 
-    let fileIO: FileIO 
+    let documentIO: DocumentIO 
     let userName: String
     let password: String
     let authentication: String
 
-    public init(fileIO: FileIO){
-        self.fileIO = fileIO
+    public init(documentIO: DocumentIO){
+        self.documentIO = documentIO
         self.userName = "admin"
         self.password = "hunter2"
         self.authentication = "Basic realm= Access to logs"
@@ -21,7 +22,7 @@ public class Logs: Route {
         let filePath = "requestLog.txt"
         if (request.headers.keys.contains("Authorization")) {
             if (checkAuthorization(authorization: request.headers["Authorization"]!)) {
-                body = fileIO.readText(path: filePath)
+                body = documentIO.readText(path: filePath)
                 responseLineData = packResponseLine(request: request, statusCode: "200", body: body) 
             }
         } 

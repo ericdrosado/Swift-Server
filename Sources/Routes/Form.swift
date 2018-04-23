@@ -4,10 +4,10 @@ import ServerIO
 
 public class Form: Route {
 
-    let fileIO: FileIO 
+    let documentIO: DocumentIO 
 
-    public init(fileIO: FileIO) {
-        self.fileIO = fileIO
+    public init(documentIO: DocumentIO) {
+        self.documentIO = documentIO
     }
 
     public func handleRoute(request: Request) -> RouteData {
@@ -42,11 +42,11 @@ public class Form: Route {
     public func manipulateTxt (request: Request) {
         let filePath = "data.txt"
         if (request.method == "POST") {
-            fileIO.writeText(requestBody: request.body, path: filePath)
+            documentIO.writeText(requestBody: request.body, path: filePath)
         } else {
-            let rawLogData = fileIO.readText(path: filePath)
+            let rawLogData = documentIO.readText(path: filePath)
             let updatedData = getUpdatedText(data: rawLogData, bodyText: request.body) 
-            fileIO.writeText(requestBody: updatedData, path: filePath)     
+            documentIO.writeText(requestBody: updatedData, path: filePath)     
         }
     }
 
