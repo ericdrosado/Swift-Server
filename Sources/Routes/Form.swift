@@ -42,11 +42,11 @@ public class Form: Route {
     public func manipulateTxt (request: Request) {
         let filePath = "data.txt"
         if (request.method == "POST") {
-            documentIO.writeText(requestBody: request.body, path: filePath)
+            documentIO.writeText(text: request.body, path: filePath)
         } else {
             let rawLogData = documentIO.readText(path: filePath)
             let updatedData = getUpdatedText(data: rawLogData, bodyText: request.body) 
-            documentIO.writeText(requestBody: updatedData, path: filePath)     
+            documentIO.writeText(text: updatedData, path: filePath)     
         }
     }
 

@@ -4,11 +4,11 @@ public class DocumentIO {
    
     public init(){}
 
-    public func writeText(requestBody: [String: String], path: String) {
+    public func writeText(text: [String: String], path: String) {
         let filePath = NSURL.fileURL(withPathComponents: [path])
-        let text = requestBody.map{ "\($0)=\($1)" }.joined(separator:"\n")
+        let formattedText = text.map{ "\($0)=\($1)" }.joined(separator:"\n")
         do {
-            try text.write(to: filePath!, atomically: false,
+            try formattedText.write(to: filePath!, atomically: false,
                     encoding: String.Encoding.utf8)
         } catch {
             print("Error writing to file. \(error)")
@@ -26,9 +26,8 @@ public class DocumentIO {
         return data
     }
 
-    public func writePlainText(requestBody: String, path: String) {
+    public func writePlainText(text: String, path: String) {
         let filePath = NSURL.fileURL(withPathComponents: [path])
-        let text = requestBody   
         do {
             try text.write(to: filePath!, atomically: false, encoding: String.Encoding.utf8)
         } catch {

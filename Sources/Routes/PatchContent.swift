@@ -20,7 +20,7 @@ public class PatchContent: Route {
                 responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK") 
                 headersData = packResponseHeaders(body: body) 
             } else if (request.method == "PATCH") {
-                documentIO.writePlainText(requestBody: request.body["body"]!, path: path)
+                documentIO.writePlainText(text: request.body["body"]!, path: path)
                 body = documentIO.readText(path: path)
                 responseLineData = packResponseLine(request: request, statusCode: "204", statusMessage: "No Content") 
                 headersData = packResponseHeaders(body: body) 
