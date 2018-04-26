@@ -13,10 +13,25 @@ public class Responder {
         return convertResponseToBytes(response: response, routeData: routeData)
     }
 
+    public func buildResponse(responseData: ResponseData) -> Data {
+        let statusLine = responseData.statusLine
+        let headers = arrangeResponseHeaders(responseData: responseData)
+        let response = statusLine + headers + "\r\n\(responseData.body)"
+        return convertResponseToBytes(response: response, responseData: responseData)
+    }
+
     private func convertResponseToBytes(response: String, routeData: RouteData) -> Data {
         var buffer = Data(response.utf8)
         if (routeData.image != nil) {
             buffer += routeData.image!
+        }
+        return buffer     
+    }
+
+    private func convertResponseToBytes(response: String, responseData: ResponseData) -> Data {
+        var buffer = Data(response.utf8)
+        if (responseData.image != nil) {
+            buffer += responseData.image!
         }
         return buffer     
     }
@@ -28,6 +43,14 @@ public class Responder {
     private func arrangeResponseHeaders(routeData: RouteData) -> String {
         var arrangedHeaders = ""
         for (key, value) in routeData.headers {
+            arrangedHeaders += "\(key): \(value)\r\n"
+        }
+        return arrangedHeaders
+    }
+
+    private func arrangeResponseHeaders(responseData: ResponseData) -> String {
+        var arrangedHeaders = ""
+        for (key, value) in responseData.headers {
             arrangedHeaders += "\(key): \(value)\r\n"
         }
         return arrangedHeaders
