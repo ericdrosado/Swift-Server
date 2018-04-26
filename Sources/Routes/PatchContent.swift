@@ -1,29 +1,34 @@
 import Foundation
 import Request
+import ServerIO
 
 public class PatchContent: Route {
 
-    public init(){}
+    let documentIO: DocumentIO
+
+    public init(documentIO: DocumentIO) {
+        self.documentIO = documentIO
+    }
 
     public func handleRoute(request: Request) -> RouteData {
         var body = ""
         var responseLineData: [String: String] = [:]
         var headersData: [String: String] = [:] 
-        if let path = NSURL.fileURL(withPathComponents: ["\(request.directory)\(request.path)"]) {
+        let path = "\(request.directory)\(request.path)"
             if (request.method == "GET" ) {
-                body = readText(request: request, path: path)
+                body = documentIO.readText(path: path)
                 responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK") 
                 headersData = packResponseHeaders(body: body) 
             } else if (request.method == "PATCH") {
-                writeText(request: request, path: path)
-                body = readText(request: request, path: path)
+                documentIO.writePlainText(text: request.body["body"]!, path: path)
+                body = documentIO.readText(path: path)
                 responseLineData = packResponseLine(request: request, statusCode: "204", statusMessage: "No Content") 
                 headersData = packResponseHeaders(body: body) 
             } else {
                 responseLineData = packResponseLine(request: request, statusCode: "405", statusMessage: "Method Not Allowed")
                 headersData = packResponseHeaders(body: body)
             }
-        }
+        
         return RouteData(responseLine: responseLineData, headers: headersData, body: body)
     }
 
@@ -48,24 +53,4 @@ public class PatchContent: Route {
         return headersData
     }
 
-    private func readText(request: Request, path: URL) -> String {
-        var fileData: String = String()
-        do {
-            fileData = try String(contentsOf: path, encoding: String.Encoding.utf8) 
-        } catch {
-            print("Error reading file. \(error)")
-        }
-        return fileData
-    }
-
-    private func writeText(request: Request, path: URL) {
-        if let text = request.body["body"] {  
-            do {
-                try text.write(to: path, atomically: false,
-                encoding: String.Encoding.utf8)
-            } catch {
-                print("Error writing to file. \(error)") 
-            }
-        }
-    }
 }

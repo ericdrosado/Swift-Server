@@ -1,11 +1,12 @@
 import XCTest
 import Routes
 import Server
+import ServerIO
 
 class PartialContentTest: XCTestCase {
     
     let parser = Parser(directory: "./cob_spec/public")
-    let partialContent = PartialContent()
+    let partialContent = PartialContent(documentIO: DocumentIO())
     
     private func buildRequest(method: String, route: String, body: String = "", range: String) -> String {
         return "\(method) \(route) HTTP/1.1\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\nRange: bytes=\(range)\r\n\r\n\(body)"

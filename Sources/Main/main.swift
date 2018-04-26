@@ -16,9 +16,9 @@ for file in files {
     }
 }
 
-let routes = Routes.routes
+let routes = Routes()
 let fourOhFour = FourOhFour()
-let router = Router(routes: routes, fourOhFour: fourOhFour)
+let router = Router(routes: routes.routes, fourOhFour: fourOhFour)
 
 let responder = Responder()
 if (directory == nil) {

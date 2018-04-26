@@ -5,9 +5,9 @@ import Server
 class ResponderTest: XCTestCase {
     
     let parser = Parser(directory: "./cob_spec/public")
-    static let routes = Routes.routes
+    static let routes = Routes()
     static let fourOhFour = FourOhFour()
-    let router = Router(routes: routes, fourOhFour: fourOhFour)
+    let router = Router(routes: routes.routes, fourOhFour: fourOhFour)
     let responder = Responder()
     let status200 = "200 OK"
     let status404 = "404 Not Found"
@@ -22,7 +22,11 @@ class ResponderTest: XCTestCase {
     }
 
     private func buildResponseWithCharset(statusCode: String, additionalHeaders: String = "", body: String = "") -> String {
-        return "HTTP/1.1 \(statusCode)\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: \(body.utf8.count)\r\n\(additionalHeaders)\r\n\r\n\(body)" 
+        return "HTTP/1.1 \(statusCode)\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: \(body.utf8.count)\(additionalHeaders)\r\n\r\n\(body)" 
+    }
+
+    private func buildResponseWithCharsetHTML(statusCode: String, additionalHeaders: String = "", body: String = "") -> String {
+        return "HTTP/1.1 \(statusCode)\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: \(body.utf8.count)\(additionalHeaders)\r\n\r\n\(body)" 
     }
 
     private func convertResponseToBytes(response: String) -> Data {
@@ -58,7 +62,7 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnHEADResponse() {
         let request = buildRequest(method: "HEAD", route: "/")
-        let stringResponse = buildResponseWithCharset(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, OPTIONS")
+        let stringResponse = buildResponseWithCharsetHTML(statusCode: status200, additionalHeaders: "\r\nAllow: GET, HEAD, OPTIONS")
         let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
@@ -161,7 +165,7 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnPOSTResponse() {
         let request = buildRequest(method: "POST", route: "/form", body: "My=Data")
-        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, PUT, POST, OPTIONS")
+        let stringResponse = buildResponseWithCharset(statusCode: status200) 
         let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
@@ -172,7 +176,7 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturnPUTResponse() {
         let request = buildRequest(method: "PUT", route: "/form", body: "My=Data")
-        let stringResponse = buildResponse(statusCode: status200, additionalHeaders: "Allow: GET, HEAD, PUT, POST, OPTIONS")
+        let stringResponse = buildResponseWithCharset(statusCode: status200) 
         let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)
