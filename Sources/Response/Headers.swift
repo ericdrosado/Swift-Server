@@ -9,7 +9,9 @@ public class Headers {
     }
 
     public func getHeaders(body: String, route: String, additionalHeaders: [String: String]? = nil) -> [String: String] {
-        headers["Content-Length"] = String(body.utf8.count)
+        if (route.range(of: "image") == nil) {
+            headers["Content-Length"] = String(body.utf8.count)
+        }
         headers["Content-Type"] = "\(ContentType().getType(route: route))"
         if (additionalHeaders != nil) {
             for (key, value) in additionalHeaders! {

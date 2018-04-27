@@ -26,6 +26,14 @@ public struct Status {
         return "\(version) 401 Unauthorized"
     }
 
+    public static func status403(version: String) -> String {
+        return "\(version) 403 Forbidden"
+    }
+
+    public static func status404(version: String) -> String {
+        return "\(version) 404 Not Found"
+    }
+
     public static func status405(version: String) -> String {
         return "\(version) 405 Method Not Allowed"
     }

@@ -1,5 +1,6 @@
 import Foundation
 import Request
+import Response
 import Routes
 
 public class Router {
@@ -12,7 +13,7 @@ public class Router {
         self.fourOhFour = fourOhFour
     }
 
-    public func handleRoute(request: Request) -> RouteData {
+    public func handleRoute(request: Request) -> ResponseData {
         if (routes.keys.contains(request.path)) {
             return routes[request.path]!.handleRoute(request: request)
         } else {

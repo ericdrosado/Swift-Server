@@ -1,5 +1,6 @@
 import Foundation
 import Request
+import Response
 import ServerIO
 
 public class Logs: Route {
@@ -16,35 +17,19 @@ public class Logs: Route {
         self.authentication = "Basic realm= Access to logs"
     }
 
-    public func handleRoute(request: Request) -> RouteData {
+    public func handleRoute(request: Request) -> ResponseData {
         var body = "" 
-        var responseLineData = packResponseLine(request: request, statusCode: "401", body: body) 
+        var status = Status.status401(version: request.httpVersion)
         let filePath = "requestLog.txt"
         if (request.headers.keys.contains("Authorization")) {
             if (checkAuthorization(authorization: request.headers["Authorization"]!)) {
                 body = documentIO.readText(path: filePath)
-                responseLineData = packResponseLine(request: request, statusCode: "200", body: body) 
+                status = Status.status200(version: request.httpVersion)
             }
         } 
-        let headersData = packResponseHeaders(body: body)
-        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
-    }
-
-    private func packResponseLine(request: Request, statusCode: String, body: String) -> [String: String] {
-        var responseLineData: [String: String] = [:]
-        responseLineData["httpVersion"] = request.httpVersion
-        responseLineData["statusCode"] = statusCode 
-        responseLineData["statusMessage"] = body
-        return responseLineData
-    }
-
-    private func packResponseHeaders(body: String) -> [String: String] {
-        var headersData: [String: String] = [:]
-        headersData["Content-Length"] = String(body.utf8.count) 
-        headersData["Content-Type"] = "text/html"
-        headersData["Allow"] = "GET" 
-        headersData["WWW-Authenticate"] = authentication
-        return headersData
+        return ResponseData(statusLine: status, 
+                            headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["WWW-Authenticate": authentication]), 
+                            body: body)
     }
 
     private func checkAuthorization(authorization: String) -> Bool {

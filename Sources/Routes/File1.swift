@@ -1,6 +1,7 @@
 import Foundation
 import Request
 import ServerIO
+import Response
 
 public class File1: Route {
 
@@ -10,32 +11,17 @@ public class File1: Route {
         self.documentIO = documentIO
     }
 
-    public func handleRoute(request: Request) -> RouteData {
-        let path = "\(request.directory)/file1"
+    public func handleRoute(request: Request) -> ResponseData {
+        let path = "\(request.directory)\(request.path)"
         var body = documentIO.readText(path: path)
-        var responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK")
+        var status = Status.status200(version: request.httpVersion)
         if (request.method != "GET") {
             body = ""
-            responseLineData = packResponseLine(request: request, statusCode: "405", statusMessage: "Method Not Allowed")
+            status = Status.status405(version: request.httpVersion)
         }
-        let headersData = packResponseHeaders(body: body) 
-        return RouteData(responseLine: responseLineData, headers: headersData, body: body) 
-    }
-
-    private func packResponseLine(request: Request, statusCode: String, statusMessage: String) -> [String: String] {
-        var responseLineData: [String: String] = [:]
-        responseLineData["httpVersion"] = request.httpVersion
-        responseLineData["statusCode"] = statusCode
-        responseLineData["statusMessage"] = statusMessage
-        return responseLineData
-    }
-
-    private func packResponseHeaders(body: String) -> [String: String] {
-        var headersData: [String: String] = [:]
-        headersData["Content-Length"] = String(body.utf8.count)
-        headersData["Content-Type"] = "text/html"
-        headersData["Allow"] = "GET"
-        return headersData
+        return ResponseData(statusLine: status, 
+                            headers: Headers().getHeaders(body: body, route: request.path), 
+                            body: body)    
     }
 
 }
