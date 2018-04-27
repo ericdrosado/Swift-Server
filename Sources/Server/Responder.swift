@@ -1,5 +1,6 @@
 import Foundation
 import Request
+import Response
 import Routes
 
 public class Responder {
@@ -14,9 +15,8 @@ public class Responder {
     }
 
     public func buildResponse(responseData: ResponseData) -> Data {
-        let statusLine = responseData.statusLine
         let headers = arrangeResponseHeaders(responseData: responseData)
-        let response = statusLine + headers + "\r\n\(responseData.body)"
+        let response = "\(responseData.statusLine)\r\n" + headers + "\r\n\(responseData.body)"
         return convertResponseToBytes(response: response, responseData: responseData)
     }
 
