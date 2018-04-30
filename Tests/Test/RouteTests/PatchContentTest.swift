@@ -1,6 +1,6 @@
 import XCTest
+import Response
 import Routes
-import Request
 import Server
 import ServerIO
 
@@ -8,109 +8,43 @@ class PatchContentTest: XCTestCase {
 
     let patchContent = PatchContent(documentIO: DocumentIO())
     let parser = Parser(directory: "./cob_spec/public")
+    let file = "patch-content"
+    let path = "./cob_spec/public/patch-content"
 
-    private func manageTempFile(file: String) {
-        let filePath = NSURL.fileURL(withPathComponents: [file])
-            let path: String = filePath!.path
-            FileManager.default.createFile(atPath: path, contents: Data(), attributes: nil)
-
-        addTeardownBlock {
-            do {
-                let filePath = NSURL.fileURL(withPathComponents: [file])
-                try FileManager.default.removeItem(at: filePath!) 
-            } catch {
-                XCTFail("Error while deleting temporary file at \(path): \(error)")
-            }
-        }
+    override func tearDown() {
+        TestHelper().deleteTempFile(file: path)
     }
 
-    private func writeText(request: Request, path: URL) {
-        if let text = request.body["body"] {  
-            do {
-                try text.write(to: path, atomically: false,
-                encoding: String.Encoding.utf8)
-            } catch {
-                print("Error writing to file. \(error)") 
-            }
-        }
-    }
-
-    private func buildRequest(method: String, route: String, additionalHeaders: String = "", body: String = "") -> String {
-        return "\(method) \(route) HTTP/1.1\r\nCache-Control: no-cache\r\nConnection: keep-alive\(additionalHeaders)\r\n\r\n\(body)"
-    }
-
-    func testHandleRouteWillReturn200StatusCodeForGetRequest() {
-        let path = "/patch-content"
-        let request = buildRequest(method: "GET", route: path, body: "default content")
+    func testHandleRouteWillReturnExpectedResponseDataForGetRequest() {
+        let body = "default content"
+        let request = TestHelper().buildRequest(method: "GET", route: "/\(file)", body: body)
         let parsedRequest = parser.parseRequest(request: request)
-        let file = "\(parsedRequest.directory)\(path)"
 
-        manageTempFile(file: file)
-        let filePath = NSURL.fileURL(withPathComponents: [file])
-        writeText(request: parsedRequest, path: filePath!)
+        TestHelper().createTempFile(file: path)
+        DocumentIO().writePlainText(text: body, path: path)
+        let responseData = patchContent.handleRoute(request: parsedRequest)
 
-        let routeData = patchContent.handleRoute(request: parsedRequest)
+        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+                                                headers: Headers().getHeaders(body: body, route: "/\(file)"), 
+                                                body: body)
 
-        XCTAssertEqual("200", routeData.responseLine["statusCode"])
+        XCTAssertTrue(expectedResponseData == responseData)
     }
 
-    func testHandleRouteWillReturnExpectedBodyForGetRequest() {
-        let path = "/patch-content"
-        let request = buildRequest(method: "GET", route: path, body: "default content")
+    func testHandleRouteWillReturnExpectedResponseDataForPatchRequest() {
+        let body = "patched content"
+        let request = TestHelper().buildRequest(method: "PATCH", route: "/\(file)", body: body)
         let parsedRequest = parser.parseRequest(request: request)
-        let file = "\(parsedRequest.directory)\(path)"
 
-        manageTempFile(file: file)
-        let filePath = NSURL.fileURL(withPathComponents: [file])
-        writeText(request: parsedRequest, path: filePath!)
-        let routeData = patchContent.handleRoute(request: parsedRequest)
+        TestHelper().createTempFile(file: path)
+        DocumentIO().writePlainText(text: body, path: path)
+        let responseData = patchContent.handleRoute(request: parsedRequest)
 
-        let expectedBody = "default content"
+        let expectedResponseData = ResponseData(statusLine: Status.status204(version: TestHelper().version), 
+                                                headers: Headers().getHeaders(body: body, route: "/\(file)"), 
+                                                body: body)
 
-        XCTAssertEqual(expectedBody, routeData.body)
+        XCTAssertTrue(expectedResponseData == responseData)
     }
 
-    func testHandleRouteWillUpdateBodyWithPatchRequest() {
-        let path = "/patch-content"
-        let request = buildRequest(method: "PATCH", route: path, body: "patched content")
-        let parsedRequest = parser.parseRequest(request: request)
-        let file = "\(parsedRequest.directory)\(path)"
-
-        manageTempFile(file: file)
-        let filePath = NSURL.fileURL(withPathComponents: [file])
-        writeText(request: parsedRequest, path: filePath!)
-        let routeData = patchContent.handleRoute(request: parsedRequest)
-
-        let expectedBody = "patched content"
-
-        XCTAssertEqual(expectedBody, routeData.body)
-    }
-
-    func testHandleRequestWillReturn204StatusCodeForPatchRequest() {
-        let path = "/patch-content"
-        let request = buildRequest(method: "PATCH", route: path, body: "patched content")
-        let parsedRequest = parser.parseRequest(request: request)
-        let file = "\(parsedRequest.directory)\(path)"
-
-        manageTempFile(file: file)
-        let filePath = NSURL.fileURL(withPathComponents: [file])
-        writeText(request: parsedRequest, path: filePath!)
-        let routeData = patchContent.handleRoute(request: parsedRequest)
-
-        XCTAssertEqual("204", routeData.responseLine["statusCode"])
-    }
-
-    func testHandleRequestWillReturn405StatusCodeIfNotGetOrPatchRequest() {
-        let path = "/patch-content"
-        let request = buildRequest(method: "PUT", route: path, body: "Test")
-        let parsedRequest = parser.parseRequest(request: request)
-        let file = "\(parsedRequest.directory)\(path)"
-
-        manageTempFile(file: file)
-        let filePath = NSURL.fileURL(withPathComponents: [file])
-        writeText(request: parsedRequest, path: filePath!)
-        let routeData = patchContent.handleRoute(request: parsedRequest)
-
-        XCTAssertEqual("405", routeData.responseLine["statusCode"])
-    }
 }

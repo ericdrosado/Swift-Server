@@ -1,4 +1,5 @@
 import XCTest
+import Response
 import Routes
 import Server
 import ServerIO
@@ -7,51 +8,53 @@ class FormTest: XCTestCase {
 
     let form = Form(documentIO: DocumentIO())
     let parser = Parser(directory: "./cob_spec/public")
-
-    private func buildRequest(method: String, route: String, body: String = "") -> String {
-        return "\(method) \(route) HTTP/1.1\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n\(body)"
-    }
-
-    private func buildRouteData(statusCode: String, statusMessage: String) -> RouteData {
-        return RouteData(responseLine: ["httpVersion": "HTTP/1.1", "statusCode": statusCode, "statusMessage": statusMessage], 
-                         headers:["Content-Length": "0", "Content-Type": "text/plain; charset=utf-8"],
-                         body:"")
-    }
     
-    func testHandleRouteWillReturnPOSTRouteData() {
-        let request = buildRequest(method: "POST", route: "/form", body: "My=Data")
+    func testHandleRouteWillReturnPOSTResponseData() {
+        let request = TestHelper().buildRequest(method: "POST", route: "/form", body: "My=Data")
         let parsedRequest = parser.parseRequest(request: request) 
-        let routeData = form.handleRoute(request: parsedRequest)
+        let responseData = form.handleRoute(request: parsedRequest)
 
-        let expectedRouteData = buildRouteData(statusCode: "200", statusMessage: "OK") 
+        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+                                                headers: Headers().getHeaders(body: "", route: "/form"), 
+                                                body: "")
 
-        XCTAssertTrue(expectedRouteData == routeData) 
+        XCTAssertTrue(expectedResponseData == responseData) 
     }
 
-    func testHandleRouteWillReturnPUTRouteData() {
-        let request = buildRequest(method: "PUT", route: "/form", body: "My=Data")
+    func testHandleRouteWillReturnPUTResponseData() {
+        let request = TestHelper().buildRequest(method: "PUT", route: "/form", body: "My=Data")
         let parsedRequest = parser.parseRequest(request: request) 
-        let routeData = form.handleRoute(request: parsedRequest)
+        let responseData = form.handleRoute(request: parsedRequest)
 
-        let expectedRouteData = buildRouteData(statusCode: "200", statusMessage: "OK") 
+        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+                                                headers: Headers().getHeaders(body: "", route: "/form"), 
+                                                body: "")
 
-        XCTAssertTrue(expectedRouteData == routeData) 
+        XCTAssertTrue(expectedResponseData == responseData) 
     }
 
-    func testHandleRouteWillReturn405StatusCodeWithGetRequest() {
-        let request = buildRequest(method: "GET", route: "/form", body: "My=Data")
+    func testHandleRouteWillReturnGETResponseData() {
+        let request = TestHelper().buildRequest(method: "GET", route: "/form")
         let parsedRequest = parser.parseRequest(request: request) 
-        let routeData = form.handleRoute(request: parsedRequest)
+        let responseData = form.handleRoute(request: parsedRequest)
 
-        XCTAssertEqual("405", routeData.responseLine["statusCode"]) 
+        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+                                                headers: Headers().getHeaders(body: "", route: "/form"), 
+                                                body: "")
+
+        XCTAssertTrue(expectedResponseData == responseData) 
     }
 
-    func testHandleRouteWillReturn405StatusCodeWithHeadRequest() {
-        let request = buildRequest(method: "HEAD", route: "/form", body: "My=Data")
+    func testHandleRouteWillReturnHEADResponseData() {
+        let request = TestHelper().buildRequest(method: "HEAD", route: "/form")
         let parsedRequest = parser.parseRequest(request: request) 
-        let routeData = form.handleRoute(request: parsedRequest)
+        let responseData = form.handleRoute(request: parsedRequest)
 
-        XCTAssertEqual("405", routeData.responseLine["statusCode"]) 
+        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+                                                headers: Headers().getHeaders(body: "", route: "/form"), 
+                                                body: "")
+
+        XCTAssertTrue(expectedResponseData == responseData) 
     }
 
 }

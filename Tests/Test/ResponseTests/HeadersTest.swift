@@ -14,7 +14,7 @@ class HeadersTest: XCTestCase {
     }
 
     func testGetHeadersWillReturnTheExpectedHeadersForTheImageGifRoute() {
-        let expectedHeaders = ["Content-Length": "0", "Content-Type": "image/gif"]
+        let expectedHeaders = ["Content-Type": "image/gif"]
 
         let actualHeaders = headers.getHeaders(body: "", route: "/image.gif")
 

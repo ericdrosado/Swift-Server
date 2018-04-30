@@ -12,11 +12,12 @@ public class Form: Route {
     }
 
     public func handleRoute(request: Request) -> ResponseData {
-        manipulateTxt(request: request)
-        let body = ""      
+        if (request.method == "POST" || request.method == "PUT") {
+            manipulateTxt(request: request)
+        }      
         return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
-                            headers: Headers().getHeaders(body: body, route: request.path), 
-                            body: body)   
+                            headers: Headers().getHeaders(body: "", route: request.path), 
+                            body: "")   
     }
 
     public func manipulateTxt (request: Request) {
