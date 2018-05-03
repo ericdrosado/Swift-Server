@@ -1,5 +1,6 @@
 import Foundation
 import Request
+import Response
 import Routes
 
 public class Router {
@@ -12,9 +13,15 @@ public class Router {
         self.fourOhFour = fourOhFour
     }
 
-    public func handleRoute(request: Request) -> RouteData {
+    public func handleRoute(request: Request) -> ResponseData {
         if (routes.keys.contains(request.path)) {
-            return routes[request.path]!.handleRoute(request: request)
+            if (RouteActions().routeActions[request.path]!.contains(request.method)) {
+                return routes[request.path]!.handleRoute(request: request)
+            } else {
+                return ResponseData(statusLine: Status.status405(version: request.httpVersion), 
+                                    headers: Headers().getHeaders(body: "", route: request.path), 
+                                    body: "")  
+            }
         } else {
             logNonExistingRoutes(request: request)
             return fourOhFour.handleRoute(request:request) 

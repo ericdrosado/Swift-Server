@@ -1,11 +1,12 @@
 import Foundation
 import Request
+import Response
 
 public class Root: Route {
 
     public init(){}
 
-    public func handleRoute(request: Request) -> RouteData {
+    public func handleRoute(request: Request) -> ResponseData {
         if (isPublicDirectory(request: request)) {
             return getDirectoryListingData(request: request)
         } else {
@@ -17,21 +18,21 @@ public class Root: Route {
         return request.directory.lowercased().range(of: "public") != nil
     }
 
-    private func getDirectoryListingData(request: Request) -> RouteData {
+    private func getDirectoryListingData(request: Request) -> ResponseData {
         let files = getFilesFromDirectory(directory: request.directory) 
         let htmlBody = buildHTMLBody(files: files)
         let body = prepareBody(body: htmlBody, method: request.method)
-        let responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK") 
-        let headersData = packResponseHeaders(body: body)
-        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
+        return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+                            headers: Headers().getHeaders(body: body, route: request.path), 
+                            body: body)        
     }
 
-    private func getForbiddenDirectoryRouteData(request: Request) -> RouteData {
+    private func getForbiddenDirectoryRouteData(request: Request) -> ResponseData {
         let statusMessage = "Forbidden"
         let body = prepareBody(body: statusMessage, method: request.method)
-        let responseLineData = packResponseLine(request: request, statusCode: "403", statusMessage: statusMessage) 
-        let headersData = packResponseHeaders(body: body)
-        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
+        return ResponseData(statusLine: Status.status403(version: request.httpVersion), 
+                            headers: Headers().getHeaders(body: body, route: request.path), 
+                            body: body)    
     }
 
     private func getFilesFromDirectory(directory: String) -> [String] {
@@ -49,7 +50,7 @@ public class Root: Route {
         for file in files {
             directoryList += "<li><a href=\"/\(file)\">\(file)</li>"
         } 
-        return "<DOCTYPE! html><html><body><h1>Directory Listing</h1><ul>\(directoryList)</ul></body></html>"
+        return "<!DOCTYPE html><html><body><h1>Directory Listing</h1><ul>\(directoryList)</ul></body></html>"
         
     }
 
@@ -59,22 +60,6 @@ public class Root: Route {
         } else {
             return body
         }
-    }
-
-    private func packResponseLine(request: Request, statusCode: String, statusMessage: String) -> [String: String] {
-        var responseLineData: [String: String] = [:]
-        responseLineData["httpVersion"] = request.httpVersion
-        responseLineData["statusCode"] = statusCode 
-        responseLineData["statusMessage"] = statusMessage
-        return responseLineData
-    }
-
-    private func packResponseHeaders(body: String) -> [String: String] {
-        var headersData: [String: String] = [:]
-        headersData["Content-Length"] = String(body.utf8.count) 
-        headersData["Content-Type"] = "text/html; charset=utf-8"
-        headersData["Allow"] = "GET, HEAD, OPTIONS" 
-        return headersData
     }
 
 }

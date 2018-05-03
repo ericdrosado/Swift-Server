@@ -22,20 +22,24 @@ public class Server {
         try socket.listen(on: port)
         let queue = DispatchQueue(label:"swiftserver", attributes: .concurrent)
         repeat {
-            queue.async {
+            let connectedSocket = try socket.acceptClientConnection()
+            queue.async { 
                 do {
-                    let connectedSocket = try socket.acceptClientConnection()
-                    let request = try connectedSocket.readString()! 
-                    let parsedRequest = self.parser.parseRequest(request: request)
-                    let routeData = self.router.handleRoute(request: parsedRequest)
-                    let requestResponse = self.responder.buildResponse(routeData: routeData)
-                    try connectedSocket.write(from: requestResponse)
+                    try self.handleConnection(connectedSocket: connectedSocket)
                     connectedSocket.close()
                 } catch {
                     print("Error while accepting client connection. \(error)")
-                }    
+                }
             }
         } while acceptNewConnection
+    }
+
+    private func handleConnection(connectedSocket: Socket) throws {
+         let request = try connectedSocket.readString()! 
+         let parsedRequest = self.parser.parseRequest(request: request)
+         let responseData = self.router.handleRoute(request: parsedRequest)
+         let requestResponse = self.responder.buildResponse(responseData: responseData)
+         try connectedSocket.write(from: requestResponse)
     }
 
 }

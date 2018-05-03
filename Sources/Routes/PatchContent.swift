@@ -1,5 +1,6 @@
 import Foundation
 import Request
+import Response
 import ServerIO
 
 public class PatchContent: Route {
@@ -10,47 +11,22 @@ public class PatchContent: Route {
         self.documentIO = documentIO
     }
 
-    public func handleRoute(request: Request) -> RouteData {
-        var body = ""
-        var responseLineData: [String: String] = [:]
-        var headersData: [String: String] = [:] 
+    public func handleRoute(request: Request) -> ResponseData {
         let path = "\(request.directory)\(request.path)"
-            if (request.method == "GET" ) {
-                body = documentIO.readText(path: path)
-                responseLineData = packResponseLine(request: request, statusCode: "200", statusMessage: "OK") 
-                headersData = packResponseHeaders(body: body) 
+        var body = documentIO.readText(path: path)
+        var status = "" 
+            if (request.method == "HEAD" ) {
+                body = ""
+                status = Status.status200(version: request.httpVersion)
             } else if (request.method == "PATCH") {
                 documentIO.writePlainText(text: request.body["body"]!, path: path)
-                body = documentIO.readText(path: path)
-                responseLineData = packResponseLine(request: request, statusCode: "204", statusMessage: "No Content") 
-                headersData = packResponseHeaders(body: body) 
+                status = Status.status204(version: request.httpVersion)
             } else {
-                responseLineData = packResponseLine(request: request, statusCode: "405", statusMessage: "Method Not Allowed")
-                headersData = packResponseHeaders(body: body)
+                status = Status.status200(version: request.httpVersion)
             }
-        
-        return RouteData(responseLine: responseLineData, headers: headersData, body: body)
-    }
-
-    private func packResponseLine(request: Request, statusCode: String, statusMessage: String) -> [String: String] {
-        var responseLineData: [String: String] = [:]
-        responseLineData["httpVersion"] = request.httpVersion
-        responseLineData["statusCode"] = statusCode
-        responseLineData["statusMessage"] = statusMessage
-        return responseLineData
-    }
-
-    private func packResponseHeaders(body: String, additionalHeaders: [String: String]? = nil) -> [String: String] {
-        var headersData: [String: String] = [:]
-        headersData["Content-Length"] = String(body.utf8.count)
-        headersData["Content-Type"] = "text/plain; charset=utf-8"
-        headersData["Allow"] = "GET, PATCH"
-        if (additionalHeaders != nil) {
-            for (key, value) in additionalHeaders! {
-                headersData[key] = value
-            }
-        }
-        return headersData
+        return ResponseData(statusLine: status, 
+                            headers: Headers().getHeaders(body: body, route: request.path), 
+                            body: body)      
     }
 
 }
