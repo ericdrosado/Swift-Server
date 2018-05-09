@@ -8,7 +8,6 @@ public class EatCookie: Route {
 
     public func handleRoute(request: Request) -> ResponseData{
         let body = prepareBody(method: request.method, request: request)
-        
         return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body)    }
@@ -17,7 +16,7 @@ public class EatCookie: Route {
         if (method == "HEAD" || method == "OPTIONS") {
             return "" 
         } else {
-            if let cookie = request.cookie {
+            if let cookie = request.cookie["type"] {
                 return "mmmm \(cookie)"
             }
             return ""
