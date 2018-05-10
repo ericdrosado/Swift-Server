@@ -1,7 +1,9 @@
 # SwiftServer [![Build Status](https://travis-ci.org/ericdrosado/Swift-Server.svg?branch=master)](https://travis-ci.org/ericdrosado/Swift-Server) 
 
+# [Deployed Server](https://erosado-swift-server.herokuapp.com)
+
 ## Project Requirements
-+ Swift 4.0.3
++ Swift 4.0.3+
 + Java 8 - Needed to run `cob_spec` test suite.
 
 

@@ -12,16 +12,17 @@ public class Parser {
     public func parseRequest(request: String) -> Request {
         var (requestLineComponents, requestHeaders, requestBody) = parseRequestMessage(request: request)
         let headers = parseHeaders(requestHeaders: requestHeaders)
-        if (requestLineComponents[1].contains("?")) {
-            let parsedPathWithQueries = parsePath(path: String(requestLineComponents[1]))
-            let queries = parseAllQueries(parsedQuery: parsedPathWithQueries[1])
-            return Request(directory: directory, method: String(requestLineComponents[0]), path: parsedPathWithQueries[0], httpVersion: String(requestLineComponents[2]), queries: queries, body: requestBody, headers: headers) 
-        } else if (headers.keys.contains("Cookie")) {
-            let cookie = parseCookie(headers: headers)
-            return Request(directory: directory, method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), body: requestBody, cookie: cookie["type"]!, headers: headers) 
-        } else {
-            return Request(directory: directory, method: String(requestLineComponents[0]), path: String(requestLineComponents[1]), httpVersion: String(requestLineComponents[2]), body: requestBody, headers: headers)
-        }
+        let (path, queries) = parsePath(path: String(requestLineComponents[1]))
+        requestLineComponents[1] = path
+        let cookie = parseCookie(headers: headers)
+        return Request(directory: directory,
+                       method: String(requestLineComponents[0]),
+                       path: String(requestLineComponents[1]),
+                       httpVersion: String(requestLineComponents[2]),
+                       queries: queries,
+                       body: requestBody,
+                       cookie: cookie,
+                       headers: headers)
     }
 
     private func parseRequestMessage(request: String) -> (Array<String>, Array<String>, [String: String]) {
@@ -57,8 +58,13 @@ public class Parser {
         return bodyData
     }
 
-    private func parsePath(path: String) -> Array<String> {
-        return path.split(separator: "?").map(String.init) 
+    private func parsePath(path: String) -> (String, [String: String]) {
+        if (path.contains("?")) {
+            let parsedPathWithQueries = path.split(separator: "?").map(String.init) 
+            return (parsedPathWithQueries[0], parseAllQueries(parsedQuery: parsedPathWithQueries[1]))
+        } else {
+            return (path, [:])
+        }
     }
 
     private func parseAllQueries(parsedQuery: String) -> [String: String] {
@@ -81,11 +87,17 @@ public class Parser {
     }
 
     private func parseCookie(headers: [String:String] ) -> [String: String] {
-        var cookie: [String: String] = [:]
-        let cookieString = headers["Cookie"]! 
-        let parsedCookie = cookieString.split(separator: "=")
-        cookie[String(parsedCookie[0]).trimmingCharacters(in: .whitespaces)] = String(parsedCookie[1]).trimmingCharacters(in: .whitespaces)
-        return cookie
+        if (headers.keys.contains("Cookie")) {
+            var cookieCollection: [String: String] = [:]
+            let cookieString = headers["Cookie"]! 
+            let cookies = cookieString.split(separator: ";")
+            for cookie in cookies {
+                let parsedCookie = cookie.split(separator: "=")
+                cookieCollection[parsedCookie[0].trimmingCharacters(in: .whitespaces)] = parsedCookie[1].trimmingCharacters(in: .whitespaces)
+            }
+            return cookieCollection
+        } else {
+            return [:]
+        }
     }
-
 }

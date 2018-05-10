@@ -16,14 +16,11 @@ public class DocumentIO {
     }
 
     public func readText(path: String) -> String {
-        let filePath = NSURL.fileURL(withPathComponents: [path])
-        var data: String = String()
-        do {
-            data = try String(contentsOf: filePath!, encoding: String.Encoding.utf8) 
-        } catch {
-            print("Error reading text file. \(error)")
+        if let data = FileManager.default.contents(atPath: path) {
+            return String(data: data, encoding: .utf8)! 
+        } else {
+            return ""
         }
-        return data
     }
 
     public func writePlainText(text: String, path: String) {

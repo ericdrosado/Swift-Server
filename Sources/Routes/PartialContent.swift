@@ -12,25 +12,29 @@ public class PartialContent: Route {
     }
 
     public func handleRoute(request: Request) -> ResponseData {
-        let path = "\(request.directory)/partial_content.txt"
+        let path = "\(request.directory)\(request.path)"
         var body = documentIO.readText(path: path)
         let totalBytes = body.utf8.count
-        let (rangeStart, rangeEnd) = setContentRange(range: request.headers["Range"]!, totalBytesBaseZero: totalBytes - 1)
         var status = ""
         var contentRange = ""
-        if (rangeEnd > totalBytes) {
-            body = ""
-            contentRange = "bytes */\(totalBytes)" 
-            status = Status.status416(version: request.httpVersion)
+        if let range = request.headers["Range"] {
+            let (rangeStart, rangeEnd) = setContentRange(range: range, totalBytesBaseZero: totalBytes - 1)
+            if (rangeEnd > totalBytes) {
+                body = ""
+                contentRange = "bytes */\(totalBytes)" 
+                status = Status.status416(version: request.httpVersion)
+            } else {
+                let totalBytesBaseZero = totalBytes - 1
+                contentRange = "bytes \(rangeStart)-\(rangeEnd)/\(totalBytes)" 
+                let startIndex = body.index(body.startIndex, offsetBy: rangeStart)
+                let endIndex = body.index(body.endIndex, offsetBy: rangeEnd - totalBytesBaseZero)
+                let range = startIndex..<endIndex
+                body = String(body[range])
+                status = Status.status206(version: request.httpVersion)
+            } 
         } else {
-            let totalBytesBaseZero = totalBytes - 1
-            contentRange = "bytes \(rangeStart)-\(rangeEnd)/\(totalBytes)" 
-            let startIndex = body.index(body.startIndex, offsetBy: rangeStart)
-            let endIndex = body.index(body.endIndex, offsetBy: rangeEnd - totalBytesBaseZero)
-            let range = startIndex..<endIndex
-            body = String(body[range])
-            status = Status.status206(version: request.httpVersion)
-        } 
+            status = Status.status200(version: request.httpVersion)
+        }
         return ResponseData(statusLine: status, 
                             headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["Content-Range": contentRange]), 
                             body: body)     
