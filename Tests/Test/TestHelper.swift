@@ -35,6 +35,15 @@ class TestHelper: XCTestCase {
         }
     }
 
+    public func createTempDirectoryWithTempFile(file: String) {
+        do {
+            try FileManager.default.createDirectory(atPath: file, withIntermediateDirectories: false)
+            createTempFile(file: "./cob_spec/public/Temp/temp")
+        } catch {
+            print("Error creating directory. \(error)")
+        }
+    }
+
 }
 
 extension ResponseData: Equatable {

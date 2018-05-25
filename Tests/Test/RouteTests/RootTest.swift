@@ -28,4 +28,21 @@ class RootTest: XCTestCase {
         XCTAssertEqual(Status.status403(version: version), responseData.statusLine)
     }
 
+    func testHandleRouteWillReturnExpectedJSONResponseData() {
+        let body = "[{\"name\":\"temp\"}]"
+        TestHelper().createTempDirectoryWithTempFile(file: "./cob_spec/public/Temp")
+        let tempParser = Parser(directory: "./cob_spec/public/Temp")
+        
+        let request = TestHelper().buildRequest(method: "GET", route: "/", additionalHeader: "Accept: application/json\r\n")
+        let parsedRequest = tempParser.parseRequest(request: request)
+        let responseData = root.handleRoute(request: parsedRequest) 
+
+        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+                                                headers: Headers().getHeaders(body: body, route: "/", additionalHeaders: ["Content-Type": "application/json"]), 
+                                                body:body) 
+
+        XCTAssertTrue(expectedResponseData == responseData)
+        TestHelper().deleteTempFile(file: "./cob_spec/public/Temp")
+    }
+
 }

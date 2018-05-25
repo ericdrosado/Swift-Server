@@ -33,7 +33,8 @@ public class ContentType {
                             "png": "image/png",
                             "txt": "text/plain; charset=utf-8",
                             "html": "text/html; charset=utf-8",
-                            "ico": "text/html; charset=utf-8"]
+                            "ico": "image/x-icon",
+                            "json": "application/json"]
     }
 
     public func getType(route: String) -> String {

@@ -21,7 +21,13 @@ public class Root: Route {
     private func getDirectoryListingData(request: Request) -> ResponseData {
         let files = getFilesFromDirectory(directory: request.directory) 
         let htmlBody = buildHTMLBody(files: files)
-        let body = prepareBody(body: htmlBody, method: request.method)
+        var body = prepareBody(body: htmlBody, method: request.method)
+        if (request.headers.keys.contains("Accept") && request.headers["Accept"] == " application/json") {
+            body = JSONBuilder().getJSONDirectoryListing(files: files)    
+            return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+                            headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["Content-Type": "application/json"]), 
+                            body: body)        
+        }
         return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body)        
@@ -62,4 +68,23 @@ public class Root: Route {
         }
     }
 
+}
+
+public class JSONBuilder {
+
+    public init(){}
+
+    public func getJSONDirectoryListing(files: [String]) -> String {
+        var jsonObject: [[String: String]] = []
+        var jsonData = Data()
+        for file in files {
+            jsonObject.append(["name": file])            
+        } 
+        do {
+            try jsonData = JSONSerialization.data(withJSONObject: jsonObject)
+        } catch {
+            print("Error during JSON data serialization: \(error)")
+        }
+        return String(data: jsonData, encoding: .utf8)!
+    } 
 }
