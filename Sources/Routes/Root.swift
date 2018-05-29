@@ -22,7 +22,7 @@ public class Root: Route {
         let files = getFilesFromDirectory(directory: request.directory) 
         let htmlBody = buildHTMLBody(files: files)
         var body = prepareBody(body: htmlBody, method: request.method)
-        if (request.headers.keys.contains("Accept") && request.headers["Accept"] == " application/json") {
+        if (request.headers.keys.contains("Accept") && request.headers["Accept"] == "application/json") {
             body = JSONBuilder().getJSONDirectoryListing(files: files)    
             return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["Content-Type": "application/json"]), 

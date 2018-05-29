@@ -39,7 +39,7 @@ public class Logs: Route {
 
     private func decodeBasicAuthorization(authorization: String) -> Array<String> {
         let codedCredentials = authorization.components(separatedBy: " ")
-        let decodedData = Data(base64Encoded: codedCredentials[2])! 
+        let decodedData = Data(base64Encoded: codedCredentials[1])! 
         let decodedString = String(data: decodedData, encoding: .utf8)!
         return decodedString.components(separatedBy:":") 
     }

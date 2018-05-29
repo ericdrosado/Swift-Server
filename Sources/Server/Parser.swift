@@ -81,7 +81,7 @@ public class Parser {
         var headers: [String: String] = [:]
         for header in requestHeaders {
             let singleHeader = header.split(separator: ":")
-                headers[String(singleHeader[0])] = String(singleHeader[1])
+                headers[String(singleHeader[0])] = String(singleHeader[1].trimmingCharacters(in: .whitespaces))
         }
         return headers
     }

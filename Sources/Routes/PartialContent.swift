@@ -41,7 +41,7 @@ public class PartialContent: Route {
     }
 
     private func setContentRange(range: String, totalBytesBaseZero: Int) -> (Int, Int) {
-        let rangeDesignation = range.replacingOccurrences(of: " bytes=", with: "") 
+        let rangeDesignation = range.replacingOccurrences(of: "bytes=", with: "") 
         let rangeValues = range.components(separatedBy: CharacterSet.decimalDigits.inverted).filter {$0 != ""}
         var rangeStart: Int
         var rangeEnd: Int 
