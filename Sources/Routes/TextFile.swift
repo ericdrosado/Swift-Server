@@ -14,11 +14,10 @@ public class TextFile: Route {
     public func handleRoute(request: Request) -> ResponseData {
         let path = "\(request.directory)\(request.path)"
         var body = documentIO.readText(path: path)
-        let status = Status.status200(version: request.httpVersion)
         if (request.method == "HEAD") {
             body = ""
         }
-        return ResponseData(statusLine: status, 
+        return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body)        
     }
