@@ -8,7 +8,7 @@ public class Cookie: Route {
     
     public func handleRoute(request: Request) -> ResponseData {
         let body = prepareBody(method: request.method)
-        return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["Set-Cookie": concatenateKeyValue(request: request) ]), 
                             body: body)
     }

@@ -47,3 +47,17 @@ public struct Status {
     }
 
 }
+
+public enum HTTPStatus: UInt {
+    case ok = 200
+
+    var descriptor : String {
+        switch self {
+            case .ok: return "OK"
+        }
+    }
+
+    public func toStatusLine(version: String) -> String {
+        return "\(version) \(self.rawValue) \(self.descriptor)"
+    }
+}
