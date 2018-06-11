@@ -26,7 +26,7 @@ class ImageTest: XCTestCase {
         let parsedRequest = currentDirectoryParser.parseRequest(request: request) 
         let responseData = image.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "/image.jpeg"), 
                                                 body: "",
                                                 image: getImage(path: "/image.jpeg"))  
@@ -42,7 +42,7 @@ class ImageTest: XCTestCase {
         let parsedRequest = currentDirectoryParser.parseRequest(request: request) 
         let responseData = image.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "/image.gif"), 
                                                 body: "",
                                                 image: getImage(path: "/image.gif"))  
@@ -58,7 +58,7 @@ class ImageTest: XCTestCase {
         let parsedRequest = currentDirectoryParser.parseRequest(request: request) 
         let responseData = image.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "/image.png"), 
                                                 body: "",
                                                 image: getImage(path: "/image.png"))  

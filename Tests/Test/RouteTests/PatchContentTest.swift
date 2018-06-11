@@ -24,7 +24,7 @@ class PatchContentTest: XCTestCase {
         DocumentIO().writePlainText(text: body, path: path)
         let responseData = patchContent.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: body, route: "/\(file)"), 
                                                 body: body)
 
@@ -40,7 +40,7 @@ class PatchContentTest: XCTestCase {
         DocumentIO().writePlainText(text: body, path: path)
         let responseData = patchContent.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status204(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.noContent.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: body, route: "/\(file)"), 
                                                 body: body)
 

@@ -16,7 +16,7 @@ class RootTest: XCTestCase {
 
         let responseData = root.handleRoute(request: parsedRequest) 
 
-        XCTAssertEqual(Status.status200(version: version), responseData.statusLine)
+        XCTAssertEqual(HTTPStatus.ok.toStatusLine(version: version), responseData.statusLine)
     }
 
     func testHandleRouteWillReturn403StatusIfDirectoryIsNotPublic() {
@@ -25,7 +25,7 @@ class RootTest: XCTestCase {
 
         let responseData = root.handleRoute(request: parsedRequest) 
 
-        XCTAssertEqual(Status.status403(version: version), responseData.statusLine)
+        XCTAssertEqual(HTTPStatus.forbidden.toStatusLine(version: version), responseData.statusLine)
     }
 
     func testHandleRouteWillReturnExpectedJSONResponseData() {
@@ -37,7 +37,7 @@ class RootTest: XCTestCase {
         let parsedRequest = tempParser.parseRequest(request: request)
         let responseData = root.handleRoute(request: parsedRequest) 
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: body, route: "/", additionalHeaders: ["Content-Type": "application/json"]), 
                                                 body:body) 
 
