@@ -51,16 +51,20 @@ public struct Status {
 public enum HTTPStatus: UInt {
     case ok = 200
     case created = 201
+    case partialContent = 206
     case unauthorized = 401
     case notFound = 404
+    case rangeNotSatisfiable = 416
     case teapot = 418
 
     var descriptor : String {
         switch self {
             case .ok: return "OK"
             case .created: return "Created"
+            case .partialContent: return "Partial Content"
             case .unauthorized: return "Unauthorized"
             case .notFound: return "Not Found" 
+            case .rangeNotSatisfiable: return "Requested Range Not Satisfiable"
             case .teapot: return "I'm a teapot"
         }
     }
