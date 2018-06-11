@@ -9,7 +9,7 @@ public class Hello: Route {
     public func handleRoute(request: Request) -> ResponseData {
         let defaultText = "World"
         let body = prepareBody(method: request.method, body: "Hello \(buildHelloBody(request: request) ?? defaultText)")
-        return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body)    
     }
