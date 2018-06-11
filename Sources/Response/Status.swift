@@ -52,12 +52,14 @@ public enum HTTPStatus: UInt {
     case ok = 200
     case created = 201
     case notFound = 404
+    case teapot = 418
 
     var descriptor : String {
         switch self {
             case .ok: return "OK"
             case .created: return "Created"
             case .notFound: return "Not Found" 
+            case .teapot: return "I'm a teapot"
         }
     }
 
