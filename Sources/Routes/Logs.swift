@@ -19,12 +19,12 @@ public class Logs: Route {
 
     public func handleRoute(request: Request) -> ResponseData {
         var body = "" 
-        var status = Status.status401(version: request.httpVersion)
+        var status = HTTPStatus.unauthorized.toStatusLine(version: request.httpVersion)
         let filePath = "requestLog.txt"
         if (request.headers.keys.contains("Authorization")) {
             if (checkAuthorization(authorization: request.headers["Authorization"]!)) {
                 body = documentIO.readText(path: filePath)
-                status = Status.status200(version: request.httpVersion)
+                status = HTTPStatus.ok.toStatusLine(version: request.httpVersion)
             }
         } 
         return ResponseData(statusLine: status, 
