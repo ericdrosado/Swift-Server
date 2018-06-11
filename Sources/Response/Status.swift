@@ -53,6 +53,7 @@ public enum HTTPStatus: UInt {
     case created = 201
     case noContent = 204
     case partialContent = 206
+    case found = 302
     case unauthorized = 401
     case notFound = 404
     case rangeNotSatisfiable = 416
@@ -64,6 +65,7 @@ public enum HTTPStatus: UInt {
             case .created: return "Created"
             case .noContent: return "No Content"
             case .partialContent: return "Partial Content"
+            case .found: return "Found"
             case .unauthorized: return "Unauthorized"
             case .notFound: return "Not Found" 
             case .rangeNotSatisfiable: return "Requested Range Not Satisfiable"
