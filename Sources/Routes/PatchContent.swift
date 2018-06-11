@@ -17,12 +17,12 @@ public class PatchContent: Route {
         var status = "" 
             if (request.method == "HEAD" ) {
                 body = ""
-                status = Status.status200(version: request.httpVersion)
+                status = HTTPStatus.ok.toStatusLine(version: request.httpVersion)
             } else if (request.method == "PATCH") {
                 documentIO.writePlainText(text: request.body["body"]!, path: path)
-                status = Status.status204(version: request.httpVersion)
+                status = HTTPStatus.noContent.toStatusLine(version: request.httpVersion)
             } else {
-                status = Status.status200(version: request.httpVersion)
+                status = HTTPStatus.ok.toStatusLine(version: request.httpVersion)
             }
         return ResponseData(statusLine: status, 
                             headers: Headers().getHeaders(body: body, route: request.path), 

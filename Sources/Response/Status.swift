@@ -51,6 +51,7 @@ public struct Status {
 public enum HTTPStatus: UInt {
     case ok = 200
     case created = 201
+    case noContent = 204
     case partialContent = 206
     case unauthorized = 401
     case notFound = 404
@@ -61,6 +62,7 @@ public enum HTTPStatus: UInt {
         switch self {
             case .ok: return "OK"
             case .created: return "Created"
+            case .noContent: return "No Content"
             case .partialContent: return "Partial Content"
             case .unauthorized: return "Unauthorized"
             case .notFound: return "Not Found" 
