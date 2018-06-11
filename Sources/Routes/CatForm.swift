@@ -19,13 +19,13 @@ public class CatForm: Route {
         if (request.method == "POST") {
             filePath += "/data"
             DocumentIO().writeText(text: request.body, path: filePath)
-            return ResponseData(statusLine: Status.status201(version: request.httpVersion) ,
+            return ResponseData(statusLine: HTTPStatus.created.toStatusLine(version: request.httpVersion),
                                 headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["Location": "\(request.path)/data"]),
                                 body: body)
         } else if (request.path == catFormDataPath) {
             return CatForm.Data().handleRoute(path: filePath, request: request)
         }
-        return ResponseData(statusLine: Status.status200(version: request.httpVersion) ,
+        return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion),
                             headers: Headers().getHeaders(body: body, route: request.path),
                             body: body)
     }
@@ -48,11 +48,11 @@ public class CatForm: Route {
             var body = ""
             if (FileManager.default.fileExists(atPath: path)) {
                 body = DocumentIO().readText(path: path)
-                return ResponseData(statusLine: Status.status200(version: request.httpVersion) ,
+                return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion),
                                     headers: Headers().getHeaders(body: body, route: request.path),
                                     body: body)
             } else {
-                return ResponseData(statusLine: Status.status404(version: request.httpVersion) ,
+                return ResponseData(statusLine: HTTPStatus.notFound.toStatusLine(version: request.httpVersion) ,
                                     headers: Headers().getHeaders(body: body, route: request.path),
                                     body: body)
             }
@@ -63,7 +63,7 @@ public class CatForm: Route {
             let rawData = DocumentIO().readText(path: path)
             let updatedData = getUpdatedText(data: rawData, bodyText: request.body) 
             DocumentIO().writeText(text: updatedData, path: path)   
-            return ResponseData(statusLine: Status.status200(version: request.httpVersion) ,
+            return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion),
                                 headers: Headers().getHeaders(body: body, route: request.path),
                                 body: body)  
         }
@@ -77,7 +77,7 @@ public class CatForm: Route {
                     print("Error deleting file. \(error)")
                 }
             }
-            return ResponseData(statusLine: Status.status200(version: request.httpVersion) ,
+            return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion),
                                 headers: Headers().getHeaders(body: body, route: request.path),
                                 body: body)
         }
