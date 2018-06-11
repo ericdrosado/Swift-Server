@@ -18,7 +18,7 @@ public class Router {
             if (RouteActions().routeActions[request.path]!.contains(request.method)) {
                 return routes[request.path]!.handleRoute(request: request)
             } else {
-                return ResponseData(statusLine: Status.status405(version: request.httpVersion), 
+                return ResponseData(statusLine: HTTPStatus.notAllowed.toStatusLine(version: request.httpVersion), 
                                     headers: Headers().getHeaders(body: "", route: request.path), 
                                     body: "")  
             }

@@ -57,6 +57,7 @@ public enum HTTPStatus: UInt {
     case unauthorized = 401
     case forbidden = 403
     case notFound = 404
+    case notAllowed = 405
     case rangeNotSatisfiable = 416
     case teapot = 418
 
@@ -70,6 +71,7 @@ public enum HTTPStatus: UInt {
             case .unauthorized: return "Unauthorized"
             case .forbidden: return "Forbidden"
             case .notFound: return "Not Found" 
+            case .notAllowed: return "Method Not Allowed"
             case .rangeNotSatisfiable: return "Requested Range Not Satisfiable"
             case .teapot: return "I'm a teapot"
         }
