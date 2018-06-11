@@ -24,11 +24,11 @@ public class Root: Route {
         var body = prepareBody(body: htmlBody, method: request.method)
         if (request.headers.keys.contains("Accept") && request.headers["Accept"] == "application/json") {
             body = JSONBuilder().getJSONDirectoryListing(files: files)    
-            return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+            return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["Content-Type": "application/json"]), 
                             body: body)        
         }
-        return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body)        
     }
@@ -36,7 +36,7 @@ public class Root: Route {
     private func getForbiddenDirectoryRouteData(request: Request) -> ResponseData {
         let statusMessage = "Forbidden"
         let body = prepareBody(body: statusMessage, method: request.method)
-        return ResponseData(statusLine: Status.status403(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.forbidden.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body)    
     }

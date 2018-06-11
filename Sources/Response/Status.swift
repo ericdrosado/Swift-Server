@@ -55,6 +55,7 @@ public enum HTTPStatus: UInt {
     case partialContent = 206
     case found = 302
     case unauthorized = 401
+    case forbidden = 403
     case notFound = 404
     case rangeNotSatisfiable = 416
     case teapot = 418
@@ -67,6 +68,7 @@ public enum HTTPStatus: UInt {
             case .partialContent: return "Partial Content"
             case .found: return "Found"
             case .unauthorized: return "Unauthorized"
+            case .forbidden: return "Forbidden"
             case .notFound: return "Not Found" 
             case .rangeNotSatisfiable: return "Requested Range Not Satisfiable"
             case .teapot: return "I'm a teapot"
