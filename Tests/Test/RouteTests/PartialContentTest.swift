@@ -25,7 +25,7 @@ class PartialContentTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request)
         let responseData = partialContent.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status206(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.partialContent.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: body, route: "partial_content.txt", additionalHeaders: ["Content-Range": "bytes 71-76/77"]), 
                                                 body: body)
                         
@@ -39,7 +39,7 @@ class PartialContentTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request)
         let responseData = partialContent.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status206(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.partialContent.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: body, route: "partial_content.txt", additionalHeaders: ["Content-Range": "bytes 4-76/77"]), 
                                                 body: body)
 
@@ -53,7 +53,7 @@ class PartialContentTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request)
         let responseData = partialContent.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status206(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.partialContent.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: body, route: "partial_content.txt", additionalHeaders: ["Content-Range": "bytes 0-4/77"]), 
                                                 body: body)
 
@@ -66,7 +66,7 @@ class PartialContentTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request)
         let responseData = partialContent.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status416(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.rangeNotSatisfiable.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "partial_content.txt", additionalHeaders: ["Content-Range": "bytes */77"]), 
                                                 body: "")
 

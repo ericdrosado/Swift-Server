@@ -15,7 +15,7 @@ public class Form: Route {
         if (request.method == "POST" || request.method == "PUT") {
             manipulateTxt(request: request)
         }      
-        return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: "", route: request.path), 
                             body: "")   
     }

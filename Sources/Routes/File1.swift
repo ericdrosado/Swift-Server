@@ -14,7 +14,7 @@ public class File1: Route {
     public func handleRoute(request: Request) -> ResponseData {
         let path = "\(request.directory)\(request.path)"
         var body = documentIO.readText(path: path)
-        let status = Status.status200(version: request.httpVersion)
+        let status = HTTPStatus.ok.toStatusLine(version: request.httpVersion)
         if (request.method == "HEAD") {
             body = ""
         }

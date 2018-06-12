@@ -16,7 +16,7 @@ public class Image: Route {
         if (image == nil) {
             return fourOhFour.handleRoute(request: request)
         }
-        return ResponseData(statusLine: Status.status200(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body,
                             image: image)   

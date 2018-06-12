@@ -8,7 +8,7 @@ public class Coffee: Route {
 
     public func handleRoute(request: Request) -> ResponseData {
         let body = prepareBody(method: request.method)
-        return ResponseData(statusLine: Status.status418(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.teapot.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
                             body: body)
     }

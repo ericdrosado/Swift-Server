@@ -22,7 +22,7 @@ public class PartialContent: Route {
             if (rangeEnd > totalBytes) {
                 body = ""
                 contentRange = "bytes */\(totalBytes)" 
-                status = Status.status416(version: request.httpVersion)
+                status = HTTPStatus.rangeNotSatisfiable.toStatusLine(version: request.httpVersion)
             } else {
                 let totalBytesBaseZero = totalBytes - 1
                 contentRange = "bytes \(rangeStart)-\(rangeEnd)/\(totalBytes)" 
@@ -30,10 +30,10 @@ public class PartialContent: Route {
                 let endIndex = body.index(body.endIndex, offsetBy: rangeEnd - totalBytesBaseZero)
                 let range = startIndex..<endIndex
                 body = String(body[range])
-                status = Status.status206(version: request.httpVersion)
+                status = HTTPStatus.partialContent.toStatusLine(version: request.httpVersion)
             } 
         } else {
-            status = Status.status200(version: request.httpVersion)
+            status = HTTPStatus.ok.toStatusLine(version: request.httpVersion)
         }
         return ResponseData(statusLine: status, 
                             headers: Headers().getHeaders(body: body, route: request.path, additionalHeaders: ["Content-Range": contentRange]), 

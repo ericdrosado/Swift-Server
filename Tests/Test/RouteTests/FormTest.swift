@@ -14,7 +14,7 @@ class FormTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request) 
         let responseData = form.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "/form"), 
                                                 body: "")
 
@@ -26,7 +26,7 @@ class FormTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request) 
         let responseData = form.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "/form"), 
                                                 body: "")
 
@@ -38,7 +38,7 @@ class FormTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request) 
         let responseData = form.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "/form"), 
                                                 body: "")
 
@@ -50,7 +50,7 @@ class FormTest: XCTestCase {
         let parsedRequest = parser.parseRequest(request: request) 
         let responseData = form.handleRoute(request: parsedRequest)
 
-        let expectedResponseData = ResponseData(statusLine: Status.status200(version: TestHelper().version), 
+        let expectedResponseData = ResponseData(statusLine: HTTPStatus.ok.toStatusLine(version: TestHelper().version), 
                                                 headers: Headers().getHeaders(body: "", route: "/form"), 
                                                 body: "")
 
