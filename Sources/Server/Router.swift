@@ -5,16 +5,14 @@ import Routes
 
 public class Router {
 
-    let routes: [String: Route]
     let fourOhFour: FourOhFour
 
-    public init(routes: [String: Route], fourOhFour: FourOhFour) {
-        self.routes = routes 
+    public init(fourOhFour: FourOhFour) {
         self.fourOhFour = fourOhFour
     }
 
     public func handleRoute(request: Request) -> ResponseData {
-        if (routes.keys.contains(request.path)) {
+        if let _ = Routes(rawValue: request.path) {
             return getRouteResponse(request: request)
         } else {
             logNonExistingRoutes(request: request)
@@ -23,9 +21,10 @@ public class Router {
     }
 
     private func getRouteResponse(request: Request) -> ResponseData {
-        if let routeActions = RouteActions().routeActions[request.path], let action =  Action(rawValue: request.method){
+        if let route = Routes(rawValue: request.path),let action =  Action(rawValue: request.method) {
+            let routeActions = route.routeActions 
             if (routeActions.contains(action)) {
-                return routes[request.path]!.handleRoute(request: request)
+                return route.routes.handleRoute(request: request)
             } else {
                 return methodNotAllowed(request: request)
             }
@@ -42,7 +41,7 @@ public class Router {
     }
 
 
-    public func logNonExistingRoutes(request: Request) {
+    private func logNonExistingRoutes(request: Request) {
         let filePath = NSURL.fileURL(withPathComponents: ["requestLog.txt"])
         if let outputStream = OutputStream(url: filePath!, append: true) { 
             outputStream.open()
