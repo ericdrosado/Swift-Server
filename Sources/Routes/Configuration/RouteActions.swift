@@ -2,30 +2,30 @@ import Foundation
 
 public class RouteActions {
 
-    public let routeActions: [String: [String]]
+    public let routeActions: [String: [Action]]
 
 
     public init() {
-        self.routeActions = ["/": ["GET", "HEAD"],
-                       "/hello": ["GET", "HEAD"],
-                       "/tea": ["GET", "HEAD"],
-                       "/coffee": ["GET", "HEAD"],
-                       "/parameters": ["GET", "HEAD"],
-                       "/cookie": ["GET", "HEAD"],
-                       "/eat_cookie": ["GET", "HEAD"],
-                       "/redirect": ["GET", "HEAD"],
-                       "/form": ["GET", "HEAD", "POST", "PUT"],
-                       "/method_options": ["GET", "HEAD", "POST", "OPTIONS", "PUT"],
-                       "/method_options2": ["GET", "HEAD", "OPTIONS"],
-                       "/logs": ["GET", "HEAD", "PUT"],
-                       "/file1": ["GET", "HEAD"],
-                       "/text-file.txt": ["GET", "HEAD"],
-                       "/image.jpeg": ["GET", "HEAD"],
-                       "/image.png": ["GET", "HEAD"],
-                       "/image.gif": ["GET", "HEAD"],
-                       "/cat-form": ["GET", "HEAD", "POST"],
-                       "/cat-form/data": ["GET", "HEAD", "PUT", "DELETE"],
-                       "/partial_content.txt": ["GET", "HEAD"],
-                       "/patch-content.txt": ["GET", "HEAD", "PATCH"]]
+        self.routeActions = ["/": [.get, .head],
+                       "/hello": [.get, .head],
+                       "/tea": [.get, .head],
+                       "/coffee": [.get, .head],
+                       "/parameters": [.get, .head],
+                       "/cookie": [.get, .head],
+                       "/eat_cookie": [.get, .head],
+                       "/redirect": [.get, .head],
+                       "/form": [.get, .head, .post, .put],
+                       "/method_options": [.get, .head, .post, .options, .put],
+                       "/method_options2": [.get, .head, .options],
+                       "/logs": [.get, .head, .put],
+                       "/file1": [.get, .head],
+                       "/text-file.txt": [.get, .head],
+                       "/image.jpeg": [.get, .head],
+                       "/image.png": [.get, .head],
+                       "/image.gif": [.get, .head],
+                       "/cat-form": [.get, .head, .post],
+                       "/cat-form/data": [.get, .head, .put, .delete],
+                       "/partial_content.txt": [.get, .head],
+                       "/patch-content.txt": [.get, .head, .patch]]
     }
 }

@@ -15,18 +15,32 @@ public class Router {
 
     public func handleRoute(request: Request) -> ResponseData {
         if (routes.keys.contains(request.path)) {
-            if (RouteActions().routeActions[request.path]!.contains(request.method)) {
-                return routes[request.path]!.handleRoute(request: request)
-            } else {
-                return ResponseData(statusLine: HTTPStatus.notAllowed.toStatusLine(version: request.httpVersion), 
-                                    headers: Headers().getHeaders(body: "", route: request.path), 
-                                    body: "")  
-            }
+            return getRouteResponse(request: request)
         } else {
             logNonExistingRoutes(request: request)
             return fourOhFour.handleRoute(request:request) 
         }
     }
+
+    private func getRouteResponse(request: Request) -> ResponseData {
+        if let routeActions = RouteActions().routeActions[request.path], let action =  Action(rawValue: request.method){
+            if (routeActions.contains(action)) {
+                return routes[request.path]!.handleRoute(request: request)
+            } else {
+                return methodNotAllowed(request: request)
+            }
+        } else {
+            return methodNotAllowed(request: request)
+        }
+
+    }
+
+    private func methodNotAllowed(request: Request) -> ResponseData {
+        return ResponseData(statusLine: HTTPStatus.notAllowed.toStatusLine(version: request.httpVersion), 
+                            headers: Headers().getHeaders(body: "", route: request.path), 
+                            body: "")  
+    }
+
 
     public func logNonExistingRoutes(request: Request) {
         let filePath = NSURL.fileURL(withPathComponents: ["requestLog.txt"])
