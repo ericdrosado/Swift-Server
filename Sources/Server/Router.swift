@@ -5,30 +5,43 @@ import Routes
 
 public class Router {
 
-    let routes: [String: Route]
     let fourOhFour: FourOhFour
 
-    public init(routes: [String: Route], fourOhFour: FourOhFour) {
-        self.routes = routes 
+    public init(fourOhFour: FourOhFour) {
         self.fourOhFour = fourOhFour
     }
 
     public func handleRoute(request: Request) -> ResponseData {
-        if (routes.keys.contains(request.path)) {
-            if (RouteActions().routeActions[request.path]!.contains(request.method)) {
-                return routes[request.path]!.handleRoute(request: request)
-            } else {
-                return ResponseData(statusLine: HTTPStatus.notAllowed.toStatusLine(version: request.httpVersion), 
-                                    headers: Headers().getHeaders(body: "", route: request.path), 
-                                    body: "")  
-            }
+        if let _ = Routes(rawValue: request.path) {
+            return getRouteResponse(request: request)
         } else {
             logNonExistingRoutes(request: request)
             return fourOhFour.handleRoute(request:request) 
         }
     }
 
-    public func logNonExistingRoutes(request: Request) {
+    private func getRouteResponse(request: Request) -> ResponseData {
+        if let route = Routes(rawValue: request.path),let action =  Action(rawValue: request.method) {
+            let routeActions = route.routeActions 
+            if (routeActions.contains(action)) {
+                return route.routes.handleRoute(request: request)
+            } else {
+                return methodNotAllowed(request: request)
+            }
+        } else {
+            return methodNotAllowed(request: request)
+        }
+
+    }
+
+    private func methodNotAllowed(request: Request) -> ResponseData {
+        return ResponseData(statusLine: HTTPStatus.notAllowed.toStatusLine(version: request.httpVersion), 
+                            headers: Headers().getHeaders(body: "", route: request.path), 
+                            body: "")  
+    }
+
+
+    private func logNonExistingRoutes(request: Request) {
         let filePath = NSURL.fileURL(withPathComponents: ["requestLog.txt"])
         if let outputStream = OutputStream(url: filePath!, append: true) { 
             outputStream.open()

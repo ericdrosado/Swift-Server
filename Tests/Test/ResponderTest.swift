@@ -5,9 +5,8 @@ import Server
 class ResponderTest: XCTestCase {
     
     let parser = Parser(directory: "./cob_spec/public")
-    static let routes = Routes()
     static let fourOhFour = FourOhFour()
-    let router = Router(routes: routes.routes, fourOhFour: fourOhFour)
+    let router = Router(fourOhFour: fourOhFour)
     let responder = Responder()
     let status200 = "200 OK"
     let status404 = "404 Not Found"
