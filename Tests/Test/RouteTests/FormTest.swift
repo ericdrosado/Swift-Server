@@ -1,8 +1,6 @@
 import XCTest
-import Response
-import Routes
+import CobSpec
 import Server
-import ServerIO
 
 class FormTest: XCTestCase {
 

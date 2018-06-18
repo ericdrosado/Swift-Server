@@ -1,7 +1,5 @@
 import Foundation
-import Request
-import Response
-import ServerIO
+import Server
 
 public class Form: Route {
 

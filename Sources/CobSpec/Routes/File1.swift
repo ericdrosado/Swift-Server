@@ -1,7 +1,5 @@
 import Foundation
-import Request
-import ServerIO
-import Response
+import Server
 
 public class File1: Route {
 

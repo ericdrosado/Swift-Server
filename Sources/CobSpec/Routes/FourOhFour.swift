@@ -1,23 +1,22 @@
 import Foundation
-import Request
-import Response
+import Server
 
-public class Coffee: Route {
+public class FourOhFour {
 
-    public init() {}
+    public init(){}
 
     public func handleRoute(request: Request) -> ResponseData {
         let body = prepareBody(method: request.method)
-        return ResponseData(statusLine: HTTPStatus.teapot.toStatusLine(version: request.httpVersion), 
+        return ResponseData(statusLine: HTTPStatus.notFound.toStatusLine(version: request.httpVersion), 
                             headers: Headers().getHeaders(body: body, route: request.path), 
-                            body: body)
-    }
-
+                            body: body)    
+        }
+    
     private func prepareBody(method: String) -> String {
         if (method == "HEAD" || method == "OPTIONS") {
-            return "" 
+            return ""    
         } else {
-            return "I'm a teapot"
+            return "Not Found"
         }
     }
 

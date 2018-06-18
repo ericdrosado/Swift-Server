@@ -1,6 +1,5 @@
 import Foundation
-import Request
-import Response
+import Server
 
 public class Image: Route {
 

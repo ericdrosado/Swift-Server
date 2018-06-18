@@ -1,6 +1,6 @@
-import ServerIO
+import Server
 
-public enum Routes: String {
+public enum Routes: String, EnumCollection {
     case root = "/"
     case hello = "/hello"
     case tea = "/tea"

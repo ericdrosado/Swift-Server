@@ -1,6 +1,4 @@
 import Foundation
-import Request
-import Response
 
 public protocol Route {
 

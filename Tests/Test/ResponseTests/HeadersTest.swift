@@ -1,5 +1,5 @@
 import XCTest
-import Response
+import Server 
 
 class HeadersTest: XCTestCase {
 
