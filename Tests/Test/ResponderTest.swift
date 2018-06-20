@@ -1,12 +1,12 @@
 import XCTest
-import Routes
+import CobSpec 
 import Server
 
 class ResponderTest: XCTestCase {
     
     let parser = Parser(directory: "./cob_spec/public")
-    static let fourOhFour = FourOhFour()
-    let router = Router(fourOhFour: fourOhFour)
+    static let routes = TestHelper().getRoutes()
+    let router = Router(routes: routes)
     let responder = Responder()
     let status200 = "200 OK"
     let status404 = "404 Not Found"
@@ -64,7 +64,7 @@ class ResponderTest: XCTestCase {
 
     func testBuildResponseWillReturn404ResponseWithGET() {
         let request = buildRequest(method: "GET", route: "/fooBar")
-        let stringResponse = buildResponse(statusCode: status404, body: "Not Found")        
+        let stringResponse = buildResponse(statusCode: status404)        
         let expectedResponse = convertResponseToBytes(response: stringResponse) 
 
         let parsedRequest = parser.parseRequest(request: request)

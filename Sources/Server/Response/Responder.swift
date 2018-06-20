@@ -1,7 +1,4 @@
 import Foundation
-import Request
-import Response
-import Routes
 
 public class Responder {
 

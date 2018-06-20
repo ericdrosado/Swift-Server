@@ -1,8 +1,8 @@
-import XCTest
 import Foundation
-import Response
+import CobSpec
+import Server 
 
-class TestHelper: XCTestCase {
+public class TestHelper {
 
     let version = "HTTP/1.1"
 
@@ -42,6 +42,15 @@ class TestHelper: XCTestCase {
         } catch {
             print("Error creating directory. \(error)")
         }
+    }
+
+    public func getRoutes() -> [String: [String: Any]] {
+        let allRoutes = Routes.allValues
+        var routes: [String: [String: Any]] = ["":["":""]]
+        for route in allRoutes {
+            routes[route.rawValue] = ["routeHandler": route.routes, "allowedActions": route.routeActions]
+        }
+        return routes
     }
 
 }

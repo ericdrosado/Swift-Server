@@ -1,6 +1,5 @@
 import XCTest
-import Response
-import Routes
+import CobSpec
 import Server
 
 class ImageTest: XCTestCase {

@@ -1,5 +1,4 @@
 import Foundation
-import Request
 
 public class Parser {
     

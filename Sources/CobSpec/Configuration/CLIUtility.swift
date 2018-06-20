@@ -10,7 +10,7 @@ public class CLIUtility {
     let directory: OptionArgument<String>
     let parsedArguments: ArgumentParser.Result
     
-    init() throws {
+    public init() throws {
         self.defaultDirectory = "./cob_spec/public"
         arguments = Array(ProcessInfo.processInfo.arguments.dropFirst())
         parser = ArgumentParser(usage: "<options>", overview: "Please use one of the following options when necessary")
