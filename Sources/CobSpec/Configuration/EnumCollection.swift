@@ -1,13 +1,13 @@
-public protocol EnumCollection: Hashable {
+public protocol RoutesCollection: Hashable {
 
-    static func cases() -> AnySequence<Self>
+    static func getCases() -> AnySequence<Self>
     static var allValues: [Self] {get}
 
 }
 
-public extension EnumCollection {
+public extension RoutesCollection {
 
-    public static func cases() -> AnySequence<Self> {
+    public static func getCases() -> AnySequence<Self> {
         return AnySequence { () -> AnyIterator<Self> in
             var raw = 0
             return AnyIterator {
@@ -22,7 +22,7 @@ public extension EnumCollection {
     }
 
     public static var allValues: [Self] {
-        return Array(self.cases())
+        return Array(self.getCases())
     }
 
 }

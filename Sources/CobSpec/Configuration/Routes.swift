@@ -1,6 +1,6 @@
 import Server
 
-public enum Routes: String, EnumCollection {
+public enum Routes: String, RoutesCollection {
     case root = "/"
     case hello = "/hello"
     case tea = "/tea"
